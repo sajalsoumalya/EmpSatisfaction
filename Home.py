@@ -4,8 +4,8 @@ import numpy as np
 st.set_page_config('Emp Satisfaction',layout="centered")
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-    
-st.title('Emp Satisfaction')
+
+st.header('Emp Satisfaction')
 col1, col2, col3, col4,col5 = st.columns([2,2,2,3,2])
 with col1:
     Industry_type = st.selectbox(
