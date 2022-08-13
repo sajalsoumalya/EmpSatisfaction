@@ -1,7 +1,7 @@
 from unittest import result
 import streamlit as st
 import streamlit.components.v1 as components
-import streamlit_modal as modal
+
 import pandas as pd
 from sklearn import metrics
 import pickle
@@ -156,17 +156,3 @@ if st.button('Submit'):
      print(metrics.accuracy_score(y,result1))
      list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
      st.write('You ',list_val[final_pred-1],'to Stay in this Company')
-     #modal.open()
-if modal.is_open():
-     with modal.container():
-          st.write(predict)
-
-          html_string = '''
-          <h1>HTML string in RED</h1>
-
-          <script language="javascript">
-               document.querySelector("h1").style.color = "red";
-          </script>
-          '''
-          components.html(html_string)
-
