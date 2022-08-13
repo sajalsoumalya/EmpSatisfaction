@@ -155,4 +155,4 @@ if st.button('Submit'):
      final_pred=int(final_pred)
      print(metrics.accuracy_score(y,result1))
      list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
-     st.write('You ',list_val[final_pred-1],'to Stay in this Company')
+     st.write('You ',list_val[final_pred-1],'with you current job')
