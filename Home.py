@@ -112,10 +112,29 @@ q19 = st.select_slider(
      'Put less effort into job than should have',
      options=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree'])
 if st.button('Submit'):
-     result = [[Qualification],[Age],[Experience],[Gender],[q1],[q2],[q3],[q4],[q5],[q6],[q7],[q8],[q9],
-     [q10],[q11],[q12],[q13],[q14],[q15],[q16],[q17],[q18],[q19]]
-    
-     st.write(result)
-     idf = pd.DataFrame(result)
-     st.dataframe(idf)
+    #result = [[Qualification],[Age],[Experience],[Gender],[q1],[q2],[q3],[q4],[q5],[q6],[q7],[q8],[q9],[q10],[q11],[q12],[q13],[q14],[q15],[q16],[q17],[q18],[q19],]
+    result.append(Qualification)
+    result.append(Age)
+    result.append(Experience)
+    result.append(Gender)
+    result.append(q1)
+    result.append(q2)
+    result.append(q3)
+    result.append(q4)
+    result.append(q5)
+    result.append(q6)
+    result.append(q7)
+    result.append(q8)
+    result.append(q9)
+    result.append(q10)
+    result.append(q11)
+    result.append(q12)
+    result.append(q13)
+    result.append(q14)
+    result.append(q15)
+    result.append(q16)
+    result.append(q17)
+    result.append(q18)
+    result.append(q19)
+    st.write(result)
 
