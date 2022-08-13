@@ -1,7 +1,12 @@
 from unittest import result
+from sklearn.svm import SVC 
+from sklearn.model_selection import train_test_split
 import streamlit as st
 import pandas as pd
+from sklearn import metrics
+import pickle
 import numpy as np
+dt={'Strongly Disagree':1,"Disagree":2,"Neutral":3,"agree":4,"strongly agree":5}
 st.set_page_config('Emp Satisfaction',layout="centered")
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -136,5 +141,18 @@ if st.button('Submit'):
     result.append(q17)
     result.append(q18)
     result.append(q19)
-    st.write(result)
+    s={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]}
+    #print(s)
+    dataframe=pd.DataFrame(s,index=[1])
+    #dataframe.to_excel("website.xlsx")
+    class_value=y=dataframe["PRESENT JOB FEELING"].values
+    features=x=dataframe[dataframe.columns[5:]].values
+    print("value",y,x)
+    loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
+    result1 = loaded_model.predict(x)
+    final_pred=metrics.accuracy_score(y,result1)
+    final_pred=int(final_pred)
+    print(metrics.accuracy_score(y,result1))
+    list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
+    st.write(list_val[final_pred-1])
 
