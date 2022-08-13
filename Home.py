@@ -1,6 +1,4 @@
 from unittest import result
-from sklearn.svm import SVC 
-from sklearn.model_selection import train_test_split
 import streamlit as st
 import pandas as pd
 from sklearn import metrics
