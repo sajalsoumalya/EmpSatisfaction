@@ -1,11 +1,13 @@
 from unittest import result
 import streamlit as st
+import streamlit.components.v1 as components
+import streamlit_modal as modal
 import pandas as pd
 from sklearn import metrics
 import pickle
 import numpy as np
 dt={'Strongly Disagree':1,"Disagree":2,"Neutral":3,"agree":4,"strongly agree":5}
-st.set_page_config('Emp Satisfaction',layout="centered")
+st.set_page_config(page_title='Emp Satisfaction',layout="centered")
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
@@ -32,20 +34,21 @@ Ql = [
      'Thoughts of leaving current job',
      'Put less effort into job than should have'
 ]
+predict = ''
 col1, col2, col3, col4,col5 = st.columns([2,2,2,3,2])
 with col1:
-    Industry_type = st.selectbox(
-        'Industry type',
-        ('IT','Education','RealEstate')
-    )
+     Industry_type = st.selectbox(
+          'Industry type',
+          ('IT','Education','RealEstate')
+     )
 with col2:
-    Age = st.number_input('Age',min_value=20,max_value=100)
+     Age = st.number_input('Age',min_value=20,max_value=100)
     
 with col3:
-    Qualification = st.selectbox(
-        'Qualification',
-        ('Diploma','Bachelors','Masters','Professional/ others')
-    )
+     Qualification = st.selectbox(
+          'Qualification',
+          ('Diploma','Bachelors','Masters','Professional/ others')
+     )
     
 with col4:
     Experience = st.selectbox(
@@ -54,9 +57,9 @@ with col4:
     )
     
 with col5:
-    Gender = st.selectbox(
-        "Gender",
-        ('Male', 'Female'))
+     Gender = st.selectbox(
+          "Gender",
+          ('Male', 'Female'))
 q1 = st.select_slider(
      'I feel fairly well satisfied with my present job',
      options=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree'])
@@ -115,42 +118,55 @@ q19 = st.select_slider(
      'Put less effort into job than should have',
      options=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree'])
 if st.button('Submit'):
-    #result = [[Qualification],[Age],[Experience],[Gender],[q1],[q2],[q3],[q4],[q5],[q6],[q7],[q8],[q9],[q10],[q11],[q12],[q13],[q14],[q15],[q16],[q17],[q18],[q19],]
-    result.append(Qualification)
-    result.append(Age)
-    result.append(Experience)
-    result.append(Gender)
-    result.append(q1)
-    result.append(q2)
-    result.append(q3)
-    result.append(q4)
-    result.append(q5)
-    result.append(q6)
-    result.append(q7)
-    result.append(q8)
-    result.append(q9)
-    result.append(q10)
-    result.append(q11)
-    result.append(q12)
-    result.append(q13)
-    result.append(q14)
-    result.append(q15)
-    result.append(q16)
-    result.append(q17)
-    result.append(q18)
-    result.append(q19)
-    s={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]}
-    #print(s)
-    dataframe=pd.DataFrame(s,index=[1])
-    #dataframe.to_excel("website.xlsx")
-    class_value=y=dataframe["PRESENT JOB FEELING"].values
-    features=x=dataframe[dataframe.columns[5:]].values
-    print("value",y,x)
-    loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
-    result1 = loaded_model.predict(x)
-    final_pred=metrics.accuracy_score(y,result1)
-    final_pred=int(final_pred)
-    print(metrics.accuracy_score(y,result1))
-    list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
-    st.write(list_val[final_pred-1])
+     #result = [[Qualification],[Age],[Experience],[Gender],[q1],[q2],[q3],[q4],[q5],[q6],[q7],[q8],[q9],[q10],[q11],[q12],[q13],[q14],[q15],[q16],[q17],[q18],[q19],]
+     result.append(Qualification)
+     result.append(Age)
+     result.append(Experience)
+     result.append(Gender)
+     result.append(q1)
+     result.append(q2)
+     result.append(q3)
+     result.append(q4)
+     result.append(q5)
+     result.append(q6)
+     result.append(q7)
+     result.append(q8)
+     result.append(q9)
+     result.append(q10)
+     result.append(q11)
+     result.append(q12)
+     result.append(q13)
+     result.append(q14)
+     result.append(q15)
+     result.append(q16)
+     result.append(q17)
+     result.append(q18)
+     result.append(q19)
+     s={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]}
+     #print(s)
+     dataframe=pd.DataFrame(s,index=[1])
+     #dataframe.to_excel("website.xlsx")
+     class_value=y=dataframe["PRESENT JOB FEELING"].values
+     features=x=dataframe[dataframe.columns[5:]].values
+     print("value",y,x)
+     loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
+     result1 = loaded_model.predict(x)
+     final_pred=metrics.accuracy_score(y,result1)
+     final_pred=int(final_pred)
+     print(metrics.accuracy_score(y,result1))
+     list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
+     st.write('You ',list_val[final_pred-1],'to Stay in this Company')
+     #modal.open()
+if modal.is_open():
+     with modal.container():
+          st.write(predict)
+
+          html_string = '''
+          <h1>HTML string in RED</h1>
+
+          <script language="javascript">
+               document.querySelector("h1").style.color = "red";
+          </script>
+          '''
+          components.html(html_string)
 

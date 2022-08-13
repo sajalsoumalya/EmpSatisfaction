@@ -17,3 +17,7 @@
 .stButton button{
     width: 100%;
 }
+
+div[data-modal-container='true'] > div > div:nth-child(2) > div > button{
+    width: auto;
+}
