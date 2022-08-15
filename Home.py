@@ -2,6 +2,9 @@ from unittest import result
 import streamlit as st
 import streamlit.components.v1 as components
 
+from google.cloud import firestore
+db = firestore.Client.from_service_account_json("empsatisfaction.json")
+
 import pandas as pd
 from sklearn import metrics
 import pickle
@@ -156,3 +159,8 @@ if st.button('Submit'):
      print(metrics.accuracy_score(y,result1))
      list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
      st.write('You ',list_val[final_pred-1],'with you current job')
+     
+     # Add a new user to the database
+     db = firestore.Client()
+     doc_ref = db.collection('EmpSatisfaction').document('EmpData')
+     doc_ref.set({"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]})
