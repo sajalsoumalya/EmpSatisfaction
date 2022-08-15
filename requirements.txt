@@ -1,6 +1,6 @@
-scikit-learn
-unittest
-streamlit
-streamlit
-pickle
 numpy
+pandas
+streamlit
+pickle5
+scikit-learn
+google.cloud
