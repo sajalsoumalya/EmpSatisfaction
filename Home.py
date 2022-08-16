@@ -2,9 +2,6 @@ from unittest import result
 import streamlit as st
 import streamlit.components.v1 as components
 
-from google.cloud import firestore
-db = firestore.Client.from_service_account_json("empsatisfaction.json")
-
 import pandas as pd
 from sklearn import metrics
 import pickle
@@ -16,27 +13,7 @@ with open('style.css') as f:
 
 st.header('Emp Satisfaction')
 result = []
-Ql = [
-     'I feel fairly well satisfied with my present job ',
-     'Most days I am enthusiastic about my work',
-     'Each day of work seems like it will never end',
-     'I find real enjoyment in my work',
-     'I consider my job rather unpleasant ',
-     'It is not always easy for me to perform tasks on time.',
-     'When I have a deadline to perform a certain task, I always finish it on time.',
-     'I always leave my tasks to the last minute.',
-     'Sometimes, I feel disappointed with my performance at work, because I know I could have done better',
-     'I felt downhearted and blue during the past few weeks',
-     'I felt bothered during the past few weeks',
-     'I was emotionally stable and sure of myself during the past few weeks.',
-     'I felt cheerful, lighthearted during the past few weeks.',
-     'I felt tired, worn out, used up, or exhausted during the past few weeks.',
-     'Thoughts of being absent',
-     'Discuss with coworkers about non-work issues',
-     'Spent work time on personal matters',
-     'Thoughts of leaving current job',
-     'Put less effort into job than should have'
-]
+
 predict = ''
 col1, col2, col3, col4,col5 = st.columns([2,2,2,3,2])
 with col1:
@@ -148,7 +125,11 @@ if st.button('Submit'):
      s={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]}
      #print(s)
      dataframe=pd.DataFrame(s,index=[1])
-     #dataframe.to_excel("website.xlsx")
+     #updating Data
+     
+     excel = pd.read_excel("website.xlsx")
+     excel2 = pd.concat([dataframe,excel])
+     excel2.to_excel("website.xlsx")
      class_value=y=dataframe["PRESENT JOB FEELING"].values
      features=x=dataframe[dataframe.columns[5:]].values
      print("value",y,x)
@@ -159,8 +140,3 @@ if st.button('Submit'):
      print(metrics.accuracy_score(y,result1))
      list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
      st.write('You ',list_val[final_pred-1],'with you current job')
-     
-     # Add a new user to the database
-     db = firestore.Client()
-     doc_ref = db.collection('EmpSatisfaction').document('EmpData')
-     doc_ref.set({"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]})
