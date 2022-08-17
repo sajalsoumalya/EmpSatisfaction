@@ -3,5 +3,5 @@ pandas
 streamlit
 pickle5
 scikit-learn
-pyrebase
+pyrebase4
 plotly-express
