@@ -6,6 +6,22 @@ import pandas as pd
 from sklearn import metrics
 import pickle
 import numpy as np
+import pyrebase
+
+
+firebaseConfig = {
+  'apiKey': "AIzaSyDmjZZKURIk-ldqoPMZ6b5UXcxaP51qvuk",
+  'authDomain': "empsatisfaction.firebaseapp.com",
+  'databaseURL': "https://empsatisfaction-default-rtdb.firebaseio.com",
+  'projectId': "empsatisfaction",
+  'storageBucket': "empsatisfaction.appspot.com",
+  'messagingSenderId': "53038019314",
+  'appId': "1:53038019314:web:28903d9e19e140fd85d66b"
+}
+
+firebase =pyrebase.initialize_app(firebaseConfig)
+db = firebase.database()
+
 dt={'Strongly Disagree':1,"Disagree":2,"Neutral":3,"agree":4,"strongly agree":5}
 st.set_page_config(page_title='Emp Satisfaction',layout="centered")
 with open('style.css') as f:
@@ -126,10 +142,6 @@ if st.button('Submit'):
      #print(s)
      dataframe=pd.DataFrame(s,index=[1])
      #updating Data
-     
-     excel = pd.read_excel("website.xlsx")
-     excel2 = pd.concat([dataframe,excel])
-     excel2.to_excel("website.xlsx")
      class_value=y=dataframe["PRESENT JOB FEELING"].values
      features=x=dataframe[dataframe.columns[5:]].values
      print("value",y,x)
@@ -140,3 +152,5 @@ if st.button('Submit'):
      print(metrics.accuracy_score(y,result1))
      list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
      st.write('You ',list_val[final_pred-1],'with you current job')
+
+     results = db.child("Survey").child('COMPANY').push(s)

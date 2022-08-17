@@ -1,17 +1,28 @@
-import random
+import pyrebase
 import streamlit as st
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import auth
 
-r=random.randint(1,10000)
-app_options = { 
-  'projectId': 'empsatisfaction',
-  'databaseURL': 'https://empsatisfaction-default-rtdb.firebaseio.com',
-  'storageBucket': 'empsatisfaction.appspot.com'
-  }
+firebaseConfig = {
+  'apiKey': "AIzaSyDmjZZKURIk-ldqoPMZ6b5UXcxaP51qvuk",
+  'authDomain': "empsatisfaction.firebaseapp.com",
+  'databaseURL': "https://empsatisfaction-default-rtdb.firebaseio.com",
+  'projectId': "empsatisfaction",
+  'storageBucket': "empsatisfaction.appspot.com",
+  'messagingSenderId': "53038019314",
+  'appId': "1:53038019314:web:28903d9e19e140fd85d66b"
+}
 
-cred = credentials.Certificate('./empsatisfaction.json')
-App = firebase_admin.initialize_app(cred,options=app_options, name=str(r))
+firebase =pyrebase.initialize_app(firebaseConfig)
 
-from firebase_admin import auth
+auth = firebase.auth()
+def fetch():
+     auth.get_account_info
+
+email = st.text_input('Enter your Email',)
+password = st.text_input('Password',type="password")
+
+if st.button('Sign In') and {email,password} is not None:
+     #auth.create_user_with_email_and_password(email,password)
+     auth.sign_in_with_email_and_password(email,password)
+     st.write(auth.get_account_info(email))
+else:
+     st.write('Opps')
