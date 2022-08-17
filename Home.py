@@ -7,13 +7,18 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-cred = credentials.Certificate("empsatisfaction.json")
-firebase_admin.initialize_app(cred,{
-  "databaseURL": "https://empsatisfaction-default-rtdb.firebaseio.com",
-})
+cred = credentials.Certificate('empsatisfaction.json')
+firebase_admin.initialize_app(cred,{'databaseURL': 'https://empsatisfaction-default-rtdb.firebaseio.com'})
+firebase_admin.get_app()
 
+"""try:
+    app = firebase_admin.get_app()
+except ValueError as e:
+    cred = credentials.Certificate('empsatisfaction.json')
+    firebase_admin.initialize_app(cred,{'databaseURL': 'https://empsatisfaction-default-rtdb.firebaseio.com'})
+    firebase_admin.get_app()"""
 ref = db.reference("py/")
-user_ref = ref.child('users')
+users_ref = ref.child('users')
 users_ref.set({
   'i':{
     'name':'SOUMALYA',
