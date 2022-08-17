@@ -1,4 +1,3 @@
-from turtle import pd
 import firebase_admin
 import streamlit as st
 
