@@ -6,7 +6,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-cred = credentials.Certificate('empsatisfaction.json')
+cred = credentials.Certificate('./empsatisfaction.json')
 firebase_admin.initialize_app(cred,{'databaseURL': 'https://empsatisfaction-default-rtdb.firebaseio.com'})
 firebase_admin.get_app()
 
