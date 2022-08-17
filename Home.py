@@ -1,7 +1,26 @@
-import pyrebase
+from turtle import pd
+import firebase_admin
 import streamlit as st
 
-config = {
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+cred = credentials.Certificate("empsatisfaction.json")
+firebase_admin.initialize_app(cred,{
+  "databaseURL": "https://empsatisfaction-default-rtdb.firebaseio.com",
+})
+
+ref = db.reference("py/")
+user_ref = ref.child('users')
+users_ref.set({
+  'i':{
+    'name':'SOUMALYA',
+    'DOB':'11'
+  }
+})
+"""
   "apiKey": "AIzaSyDmjZZKURIk-ldqoPMZ6b5UXcxaP51qvuk",
   "authDomain": "empsatisfaction.firebaseapp.com",
   "projectId": "empsatisfaction",
@@ -10,22 +29,4 @@ config = {
   "messagingSenderId": "53038019314",
   "appId": "1:53038019314:web:886437c48be901df85d66b"
 }
-
-firebase = pyrebase.initialize_app(config)
-
-# Get a reference to the auth service
-auth = firebase.auth()
-
-# Log the user in
-user = auth.sign_in_with_email_and_password(email, password)
-
-# Get a reference to the database service
-db = firebase.database()
-
-# data to save
-data = {
-    "name": "Mortimer 'Morty' Smith"
-}
-
-# Pass the user's idToken to the push method
-results = db.child("users").push(data, user['idToken'])
+"""
