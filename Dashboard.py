@@ -1,3 +1,4 @@
+from lib2to3.pgen2 import driver
 import matplotlib.pyplot as plt
 import pandas as pd  
 import streamlit as st
@@ -11,7 +12,7 @@ st.set_page_config(page_title="EmpSatisfaction", page_icon=":bar_chart:",)
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-
+from selenium import webdriver
 
 import random
 r = random.random()
@@ -20,7 +21,10 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred,{'databaseURL': "https://empsatisfaction-default-rtdb.firebaseio.com"})
 ref = db.reference('Survey/')
 
-
+def get_curent_url():
+    driver = webdriver.Chrome()
+    get_url = driver.current_url
+    return get_url
     # ---- READ EXCEL ----
 @st.cache
 def get_data_from_excel(sheet_name):
@@ -62,6 +66,9 @@ if page == 'Analise':
         del survey["name"]
         del survey["uid"]
         survey_lenght = len(survey)
+
+        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/?survey='+str(survey)
+        st.code(code)
         st.subheader(str(survey_lenght) + " number of people attended this survey")
         satis = []
         for keys,val in survey.items():
