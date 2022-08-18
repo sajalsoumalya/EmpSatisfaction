@@ -5,7 +5,7 @@ from pathlib import Path
 from tabnanny import check
 from typing_extensions import Self
 import matplotlib.pyplot as plt
-
+import numpy as np
 import pandas as pd  # pip install pandas openpyxl
 import plotly.express as px  # pip install plotly-express
 import streamlit as st  # pip install streamlit
@@ -69,7 +69,7 @@ if page == 'Analise':
         del survey["name"]
         del survey["uid"]
         survey_lenght = len(survey)
-        st.subheader(survey_lenght,"number of People Attended This Survey")
+        st.subheader(str(survey_lenght) + " number of people attended this survey")
         satis = []
         for keys,val in survey.items():
             satis.append(val['Satisfaction'])
@@ -79,9 +79,15 @@ if page == 'Analise':
         #explode = (0, 0.1)  # only "explode" the 2nd slice (i.e. 'Hogs')
         fig1, ax1 = plt.subplots()
         ax1.pie(sizes,labels=labels, autopct='%1.1f%%',
-                shadow=True, startangle=90)
+                shadow=False, startangle=90)
         ax1.axis('equal') 
         st.pyplot(fig1)
+
+        chart_data = pd.DataFrame(
+            sizes,
+            columns=labels
+        )
+        st.bar_chart(chart_data)
 if page == 'Create':
     email = st.text_input('Email',placeholder="Enter your Email")
     survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
