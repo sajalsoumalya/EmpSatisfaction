@@ -72,7 +72,10 @@ if page == 'Analise':
         st.write("Survey Link")
         code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
         st.code(code)
-        st.subheader(str(survey_lenght) + " number of people attended this survey")
+        if(survey_lenght>0):
+            st.subheader(str(survey_lenght) + " number of people attended this survey")
+        else:
+            st.subheader("No one has attended this survey")
         satis = []
         for keys,val in survey.items():
             satis.append(val['Satisfaction'])
