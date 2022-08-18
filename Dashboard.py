@@ -8,6 +8,8 @@ from collections import Counter
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="EmpSatisfaction", page_icon=":bar_chart:",)
+with open('Dashboard.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 import firebase_admin
 from firebase_admin import credentials
@@ -65,7 +67,7 @@ if page == 'Analise':
         del survey["companey_name"]
         del survey["email"]
         survey_lenght = len(survey)
-
+        st.write("Survey Link")
         code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
         st.code(code)
         st.subheader(str(survey_lenght) + " number of people attended this survey")
