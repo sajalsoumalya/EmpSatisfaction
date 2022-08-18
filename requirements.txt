@@ -7,3 +7,4 @@ pyrebase4
 plotly-express
 openpyxl
 matplotlib
+firebase_admin

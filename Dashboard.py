@@ -1,14 +1,6 @@
-from distutils.log import error
-from multiprocessing.sharedctypes import Value
-import pickle
-from pathlib import Path
-from tabnanny import check
-from typing_extensions import Self
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd  # pip install pandas openpyxl
-import plotly.express as px  # pip install plotly-express
-import streamlit as st  # pip install streamlit
+import pandas as pd  
+import streamlit as st
 
 
 from collections import Counter
