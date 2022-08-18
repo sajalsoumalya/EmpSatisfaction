@@ -95,14 +95,14 @@ if page == 'Create':
     if submitted:
         value = check(survey_name)
         if value == True:
-            survey_name.replace(" ", "_")
-            ref.child(survey_name).set({
+            survey_nam = survey_name.replace(" ", "_")
+            ref.child(survey_nam).set({
                 "companey_name":companey_name,
                 "email":email
             })
             with placeHolder:
                     st.success("Survey Created")
-                    code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(survey_name)
+                    code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(survey_nam)
                     st.code(code)
         else:
             st.error(":error: Survey name already exist")
