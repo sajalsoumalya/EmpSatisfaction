@@ -12,7 +12,6 @@ st.set_page_config(page_title="EmpSatisfaction", page_icon=":bar_chart:",)
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-from selenium import webdriver
 
 import random
 r = random.random()
@@ -67,7 +66,7 @@ if page == 'Analise':
         del survey["uid"]
         survey_lenght = len(survey)
 
-        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/?survey='+str(survey)
+        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/?survey='+str(selected_survey)
         st.code(code)
         st.subheader(str(survey_lenght) + " number of people attended this survey")
         satis = []
