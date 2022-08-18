@@ -44,6 +44,7 @@ def check(key):
     length = len(list(value.keys()))
     if(length>0):
         k=False
+    
     return k
 def get_survey_list():
     survey_list = ref.order_by_key().get()
@@ -94,6 +95,7 @@ if page == 'Create':
     if submitted:
         value = check(survey_name)
         if value == True:
+            survey_name.replace(" ", "_")
             ref.child(survey_name).set({
                 "companey_name":companey_name,
                 "email":email
