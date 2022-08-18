@@ -1,4 +1,5 @@
 from lib2to3.pgen2 import driver
+from logging import PlaceHolder
 import matplotlib.pyplot as plt
 import pandas as pd  
 import streamlit as st
@@ -84,17 +85,23 @@ if page == 'Analise':
         ax1.axis('equal') 
         st.pyplot(fig1)
 if page == 'Create':
-    email = st.text_input('Email',placeholder="Enter your Email")
-    survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
-    companey_name = st.text_input('Companey Name',placeholder="Enter your Companey Name")
-    if st.button("Create"):
+    placeHolder = st.empty()
+    with placeHolder.form("create_survey"):
+        email = st.text_input('Email',placeholder="Enter your Email")
+        survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
+        companey_name = st.text_input('Companey Name',placeholder="Enter your Companey Name")
+        submitted = st.form_submit_button("Create")
+    if submitted:
         value = check(survey_name)
         if value == True:
             ref.child(survey_name).set({
                 "companey_name":companey_name,
                 "email":email
             })
-            st.success("Survey Created")
+            with placeHolder:
+                    st.success("Survey Created")
+                    code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(survey_name)
+                    st.code(code)
         else:
             st.error(":error: Survey name already exist")
 
