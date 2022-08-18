@@ -1,6 +1,14 @@
 from urllib import request
 import pyrebase
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import auth
 import streamlit as st
+import random
+r = random.random()
+cred = credentials.Certificate('empsatisfaction.json')
+firebase_admin.initialize_app(cred,{'databaseURL': "https://empsatisfaction-default-rtdb.firebaseio.com",},name=str(r))
+uid = '7GhfrXkzObPyMbWxOwXqtkhr8qg2'
 
 firebaseConfig = {
   'apiKey': "AIzaSyDmjZZKURIk-ldqoPMZ6b5UXcxaP51qvuk",
@@ -14,31 +22,27 @@ firebaseConfig = {
 
 firebase =pyrebase.initialize_app(firebaseConfig)
 
+autho = firebase.auth()
+dbs = firebase.database()
 
+surveys = dbs.child("Survey").order_by_key().order_by_child("uid").equal_to(uid).get()
+st.write(surveys)
 option = st.sidebar.selectbox('',
      options=['Home','Sign Up','Sign In']
 )
-def logout(request):
-    try:
-        del request.session['token_id']
-    except KeyError:
-        pass
-    return st.sidebar.warning("You're logged out.")
 
-auth = firebase.auth()
 st.header("Emplyee Satisfaction")
 def login(email,password):
      if email is not None:
           if password is not None:
-               auth_status = auth.sign_in_with_email_and_password(email,password)
-               
+               auth_status = autho.sign_in_with_email_and_password(email,password)
                st.sidebar.success("Succefully Logged in")
-               col1,col2 = st.columns([3,1])
-               with col1:
-                    st.sidebar.subheader("Welcome")
-               with col2:
-                    st.sidebar.button('Logout',on_click=logout, args=(request))
+               uid = auth_status['localId']
+               st.sidebar.subheader("Welcome " + auth_status['displayName'])
+               st.sidebar.button('Logout')
                st.write(auth_status)
+               Companies = dbs.child("Survey").order_by_child("uid").equal_to(uid).get()
+               st.write(Companies)
           else:
                st.warning("Please Enter a Valid Password")
      else:
@@ -47,9 +51,14 @@ def login(email,password):
 def signup(email,password,name):
      if email is not None:
           if password is not None:
-               auth_status = auth.create_user_with_email_and_password(email,password)
+               user = auth.create_user(
+               email=email,
+               email_verified=False,
+               password=password,
+               display_name=name,
+               disabled=False)
+               print('Sucessfully created new user: {0}'.format(user.uid))
                st.sidebar.success("Account Succefully created")
-               st.write(auth_status)
           else:
                st.warning("Please Enter a Valid Password")
      else:

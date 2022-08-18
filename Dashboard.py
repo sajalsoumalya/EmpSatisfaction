@@ -22,24 +22,24 @@ def get_data_from_excel(sheet_name):
     # Add 'hour' column to dataframe
     #df["hour"] = pd.to_datetime(df["Time"], format="%H:%M:%S").dt.hour
     return df
-def apps():
-    st.title("EmpSatisfaction")
-    st.markdown("##")
-    x1 = pd.ExcelFile("./survey.xlsx")
 
-    sheet = st.selectbox(
-        "Select The Survey:",
-        options=x1.sheet_names
-    )
-    if sheet is not None:
-        df = get_data_from_excel(sheet)
+st.title("EmpSatisfaction")
+st.markdown("##")
+x1 = pd.ExcelFile("./survey.xlsx")
 
-        # ---- SIDEBAR ----
-        #authenticator.logout("Logout", "sidebar")
-        st.sidebar.title(f"Welcome ")
-        st.dataframe(df)
-        # ---- MAINPAGE ----
+sheet = st.selectbox(
+    "Select The Survey:",
+    options=x1.sheet_names
+)
+if sheet is not None:
+    df = get_data_from_excel(sheet)
+
+    # ---- SIDEBAR ----
+    #authenticator.logout("Logout", "sidebar")
+    st.sidebar.title(f"Welcome ")
+    st.dataframe(df)
+    # ---- MAINPAGE ----
 
 
 
-        st.markdown("""---""")
+    st.markdown("""---""")
