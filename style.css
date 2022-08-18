@@ -7,6 +7,9 @@
 .st-av .st-aw .st-ax .st-ay .st-du .st-dn .st-b7 .st-do .st-dp{
     background: linear-gradient(to right, rgb(255, 75, 75) 0%, rgb(0 222 12) 100%, rgba(151, 166, 195, 0.25) 100%, rgba(151, 166, 195, 0.25) 100%)
 }
+[data-testid="stTickBarMin"]{
+    display:none
+}
 [data-testid="stTickBarMin"] {
     color: red;
 }
