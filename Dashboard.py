@@ -50,7 +50,7 @@ def get_survey_list():
     survey_list = ref.order_by_key().get()
     return list(survey_list.keys())
 
-st.title("EmpSatisfaction")
+st.title("Emplyee Satisfaction Dashboard")
 st.markdown("##")
 x1 = pd.ExcelFile("./survey.xlsx")
 
