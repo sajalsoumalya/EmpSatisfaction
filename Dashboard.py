@@ -66,7 +66,7 @@ if page == 'Analise':
         del survey["uid"]
         survey_lenght = len(survey)
 
-        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/?survey='+str(selected_survey)
+        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
         st.code(code)
         st.subheader(str(survey_lenght) + " number of people attended this survey")
         satis = []
