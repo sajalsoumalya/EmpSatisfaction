@@ -75,12 +75,6 @@ if page == 'Analise':
                 shadow=False, startangle=90)
         ax1.axis('equal') 
         st.pyplot(fig1)
-
-        chart_data = pd.DataFrame(
-            sizes,
-            columns=labels
-        )
-        st.bar_chart(chart_data)
 if page == 'Create':
     email = st.text_input('Email',placeholder="Enter your Email")
     survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
