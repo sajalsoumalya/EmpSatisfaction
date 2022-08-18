@@ -1,3 +1,4 @@
+from tkinter.tix import Form
 from unittest import result
 import streamlit as st
 import streamlit.components.v1 as components
@@ -31,7 +32,8 @@ if (survey_dict_length>0):
      result = []
 
      predict = ''
-     with st.form("my_form"):
+     placeholder = st.empty()
+     with placeholder.form("my_form"):
           col1, col2, col3, col4,col5 = st.columns([2,2,2,3,2])
           with col1:
                Industry_type = st.selectbox(
@@ -156,7 +158,9 @@ if (survey_dict_length>0):
                #st.write('You ',list_val[final_pred-1],'with you current job')
                data={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18],"Satisfaction":list_val[final_pred-1]}
                ref.child(survey).push().set(data)
-               st.success("you have Succesfully Completed the Survey")
+               placeholder.empty()
+               with placeholder:
+                    st.success("Congrts! You have succesfully completed the survey")
 else:
-     st.subheader("Survey does not exits")
-     st.write("please contact to the Administrator")
+     st.header("Opps! Survey does not exits",anchor=None)
+     st.write("Please contact to the Administrator")
