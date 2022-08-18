@@ -1,5 +1,3 @@
-from tkinter.tix import Form
-from unittest import result
 import streamlit as st
 import streamlit.components.v1 as components
 
