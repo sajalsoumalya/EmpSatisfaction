@@ -62,8 +62,8 @@ if page == 'Analise':
     )
     if selected_survey is not None:
         survey = ref.child(selected_survey).order_by_key().get()
-        del survey["name"]
-        del survey["uid"]
+        del survey["companey_name"]
+        del survey["email"]
         survey_lenght = len(survey)
 
         code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
