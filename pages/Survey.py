@@ -25,10 +25,8 @@ with open('style.css') as f:
 survey_dict = st.experimental_get_query_params()
 survey_dict_length = len(survey_dict)
 surveys= list(*survey_dict.values())
-
-survey = str(surveys[0])
-
 if (survey_dict_length>0):
+     survey = str(surveys[0])
      st.header('Employee Satisfaction')
      result = []
 
