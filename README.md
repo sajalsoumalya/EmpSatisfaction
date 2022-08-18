@@ -1,3 +1,3 @@
 # EmpSatisfaction
 
-https://sajalsoumalya-empsatisfaction-home-nal19m.streamlitapp.com/
+https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/
