@@ -8,3 +8,5 @@ plotly-express
 openpyxl
 matplotlib
 firebase_admin
+selenium
+tk
