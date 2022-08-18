@@ -16,7 +16,7 @@ from firebase_admin import db
 import random
 r = random.random()
 cred = credentials.Certificate('empsatisfaction.json')
-firebase_admin.initialize_app(cred,{'databaseURL': "https://empsatisfaction-default-rtdb.firebaseio.com"}, name=str(r))
+firebase_admin.initialize_app(cred,{'databaseURL': "https://empsatisfaction-default-rtdb.firebaseio.com"})
 ref = db.reference('Survey/')
 
 
