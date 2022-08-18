@@ -6,3 +6,4 @@ scikit-learn
 pyrebase4
 plotly-express
 openpyxl
+matplotlib
