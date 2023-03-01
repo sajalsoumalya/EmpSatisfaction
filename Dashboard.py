@@ -93,7 +93,7 @@ if page == 'Create':
     with placeHolder.form("create_survey"):
         email = st.text_input('Email',placeholder="Enter your Email")
         survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
-        companey_name = st.text_input('Companey Name',placeholder="Enter your Companey Name")
+        companey_name = st.text_input('Company Name',placeholder="Enter your Companey Name")
         submitted = st.form_submit_button("Create")
     if submitted:
         value = check(survey_name)
