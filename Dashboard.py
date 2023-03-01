@@ -57,8 +57,8 @@ x1 = pd.ExcelFile("./survey.xlsx")
 # ---- SIDEBAR ----
 #authenticator.logout("Logout", "sidebar")
 st.sidebar.title(f"Welcome ")
-page = st.sidebar.selectbox('Pages',options=['Analise','Create'])
-if page == 'Analise':
+page = st.sidebar.selectbox('Pages',options=['Analyze','Create'])
+if page == 'Analyze':
     survey_list = get_survey_list()
     selected_survey = st.selectbox(
     "Select The Survey:",
