@@ -141,8 +141,8 @@ if menu == 'Dashboard':
                     st.write(fig2)
                 with fig_col3:
                     st.markdown("### Pie of Satisfaction")
-                    fig3 = px.pie(data_frame = df, values=sizes)
-                    st.write(fig3)
+                    #fig3 = px.pie(data_frame = df, values=sizes)
+                    #st.write(fig3)
                 st.markdown("### Detailed Data View")
                 st.dataframe(df)
                 time.sleep(1)
