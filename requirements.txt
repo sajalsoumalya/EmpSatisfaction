@@ -2,10 +2,11 @@ streamlit
 pandas
 pickle
 numpy
-from sklearn
+sklearn
 firebase_admin
 lib2to3.pgen2
 logging
 plotly.express 
 time 
 collections
+streamlit-option-menu

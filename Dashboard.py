@@ -14,6 +14,8 @@ import time # to simulate a real time data, time loop
 
 from collections import Counter
 
+from streamlit_option_menu import option_menu #for Menubar
+
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Dashboard Employee Satisfaction", page_icon=":bar_chart:",layout="wide",initial_sidebar_state="collapsed")
 with open('Dashboard.css') as f:
