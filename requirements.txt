@@ -5,7 +5,7 @@ numpy
 sklearn
 firebase_admin
 pgen2
-plotly-express
+plotly
 time 
 collections
 streamlit-option-menu
