@@ -5,7 +5,6 @@ numpy
 sklearn
 firebase_admin
 pgen2
-logging
 plotly.express 
 time 
 collections
