@@ -6,5 +6,4 @@ sklearn
 firebase_admin
 pgen2
 plotly
-collections
 streamlit-option-menu
