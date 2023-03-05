@@ -79,7 +79,8 @@ if menu == 'Dashboard':
     )
     if selected_survey is not None:
         survey = ref.child(selected_survey).order_by_key().get()
-
+        cname = survey["companey_name"]
+        cemail = survey["email"]
         del survey["companey_name"]
         del survey["email"]
         survey_lenght = len(survey)
@@ -118,15 +119,17 @@ if menu == 'Dashboard':
                 row.append(val["LESS EFFORT"])
                 row.append(val['Satisfaction'])
                 df.loc[len(df.index)] = row
-
+            female = df['Gender'].tolist().count('Female')
+            male = df['Gender'].tolist().count('Male')
+            ratio = str(male) +":"+str(female)
             placeholder = st.empty()
             with placeholder.container():
                 # create three columns
                 kpi1, kpi2, kpi3 = st.columns(3)
                 # fill in those three columns with respective metrics or KPIs 
-                kpi1.metric(label="Avarage Age ⏳", value=np.mean(df['Age']), delta= np.mean(df['Age']-10))
-                kpi2.metric(label="Gender Ratio 💍", value= 'N/A', delta= 'N/A')
-                kpi3.metric(label="Response Count ", value= survey_lenght)
+                kpi1.metric(label="Compeny Name 💍", value=cname, delta=cemail)
+                kpi2.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male/Female')
+                kpi3.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
 
                 # create two columns for charts 
 
@@ -169,6 +172,14 @@ if menu == 'Create Survey':
         else:
             st.error(":error: Survey name already exist")
 if menu == 'Manage Surveys':
+    survey_list = get_survey_list()
+    selected_survey = st.selectbox(
+    "Select Any Survey From the Dropdown",
+    options=survey_list
+    )
+    if selected_survey is not None:
+        survey = ref.child(selected_survey).order_by_key().get()
+
     st.write("Survey Link")
     code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
     st.code(code)
