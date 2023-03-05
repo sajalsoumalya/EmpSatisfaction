@@ -17,7 +17,7 @@ from collections import Counter
 from streamlit_option_menu import option_menu #for Menubar
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
-st.set_page_config(page_title="Dashboard Employee Satisfaction", page_icon=":bar_chart:",layout="wide",initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Employee Satisfaction Dashboard", page_icon=":bar_chart:",layout="wide",initial_sidebar_state="collapsed")
 with open('Dashboard.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
@@ -66,7 +66,7 @@ menu = option_menu(None, ["Dashboard", "Create Survey","Manage Surveys"],
     icons=['house', 'cloud-upload','gear'], 
     menu_icon="cast", default_index=0, orientation="horizontal")
 
-st.title("Emplyee Satisfaction Dashboard")
+st.title("Employee Satisfaction Dashboard")
 st.markdown("##")
 #x1 = pd.ExcelFile("./survey.xlsx")
 selected_survey = ''
