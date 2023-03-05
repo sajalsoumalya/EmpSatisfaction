@@ -1,8 +1,7 @@
-from lib2to3.pgen2 import driver
+from lib2to3.pgen2 import driver # for geting web url
 from logging import PlaceHolder
-import matplotlib.pyplot as plt
-import pandas as pd  
-import streamlit as st
+import pandas as pd  # for dataframe
+import streamlit as st #stremlit framework
 import numpy as np # np mean, np random 
 
 
@@ -12,8 +11,6 @@ from firebase_admin import db
 
 import plotly.express as px # interactive charts 
 import time # to simulate a real time data, time loop 
-
-
 
 from collections import Counter
 

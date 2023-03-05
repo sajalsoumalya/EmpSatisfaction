@@ -1,12 +1,11 @@
-numpy
-pandas
 streamlit
-pickle5
-scikit-learn
-pyrebase4
-plotly-express
-openpyxl
-matplotlib
+pandas
+pickle
+numpy
+from sklearn
 firebase_admin
-selenium
-tk
+lib2to3.pgen2
+logging
+plotly.express 
+time 
+collections
