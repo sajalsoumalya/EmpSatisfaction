@@ -1,6 +1,6 @@
 streamlit
 pandas
-pickle
+pickle5
 numpy
 sklearn
 firebase_admin
