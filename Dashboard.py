@@ -3,7 +3,7 @@ from logging import PlaceHolder
 import pandas as pd  # for dataframe
 import streamlit as st #stremlit framework
 import numpy as np # np mean, np random 
-
+import pickle
 
 import firebase_admin
 from firebase_admin import credentials
@@ -15,6 +15,8 @@ import time # to simulate a real time data, time loop
 from collections import Counter
 
 from streamlit_option_menu import option_menu #for Menubar
+
+import json
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Employee Satisfaction Dashboard", page_icon=":bar_chart:",layout="wide",initial_sidebar_state="collapsed")
@@ -29,7 +31,6 @@ if not firebase_admin._apps:
 ref = db.reference('Survey/')
 
 #to get the url of the current page 
-@st.cache_data
 def get_curent_url():
     driver = webdriver.Chrome()
     get_url = driver.current_url
@@ -77,11 +78,60 @@ selected_comp = None
 comp_email = None
 selected_survey = None
 survey_passcode = None
-df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
+uploaded_csv = None
+
+def uplaod_data_from_csv(df, comp, survey):
+    features=x=df[df.columns[4:]].values
+    loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
+    result1 = loaded_model.predict(x)
+    result_index = json.dumps(int(result1[0]))
+    result_index = int(result_index)-1
+    print(result_index)
+    list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
+    print(list_val[result_index])
+    slink = comp+'/'+survey
+    for ind in df.index:
+        s={
+            "Qualification":df['Qualification'][ind],
+            "Age":json.dumps(int(df['Age'][ind])),
+            "Experience":df['Experience'][ind],
+            "Gender":df['Gender'][ind],
+            "ENTHUSIASM":json.dumps(int(df['ENTHUSIASM'][ind])),
+            "WORKOVERLD":json.dumps(int(df['WORKOVERLD'][ind])),
+            "ENJOYMNT":json.dumps(int(df['ENJOYMNT'][ind])),
+            "UNPLSNTTASK":json.dumps(int(df['UNPLSNTTASK'][ind])),
+            "TOUGH PERFORMNCE":json.dumps(int(df['TOUGH PERFORMNCE'][ind])),
+            "TIME MNGMNT":json.dumps(int(df['TIME MNGMNT'][ind])),
+            "DISAPNTMNT":json.dumps(int(df['DISAPNTMNT'][ind])),
+            "DOWNHRTED":json.dumps(int(df['DOWNHRTED'][ind])),
+            "BOTHRED":json.dumps(int(df['BOTHRED'][ind])),
+            "EMOSNAL STABLTY":json.dumps(int(df['EMOSNAL STABLTY'][ind])),
+            "CHEERUL":json.dumps(int(df['CHEERUL'][ind])),
+            "TIRED":json.dumps(int(df['TIRED'][ind])),
+            "ABSNT MIND":json.dumps(int(df['ABSNT MIND'][ind])),
+            "DISCUSS CO-WORKER":json.dumps(int(df['DISCUSS CO-WORKER'][ind])),
+            "PERSNL MTTR":json.dumps(int(df['PERSNL MTTR'][ind])),
+            "THOUGHT OF LEAVING":json.dumps(int(df['THOUGHT OF LEAVING'][ind])),
+            "LESS EFFORT":json.dumps(int(df['LESS EFFORT'][ind])),
+            "Satisfaction":list_val[result_index]
+            }
+        ref.child(slink).push().set(s)
+
+df = pd.DataFrame(
+    columns=[
+        "Qualification","Age","Experience","Gender",
+        "ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK",
+        "TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT",
+        "DOWNHRTED","BOTHRED","EMOSNAL STABLTY",
+        "CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER",
+        "PERSNL MTTR","THOUGHT OF LEAVING",
+        "LESS EFFORT","Satisfaction"
+        ],dtype=np.int8)
+df_csv = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT"])
 
 def convert_df(df):
    return df.to_csv(index=False).encode('utf-8')
-csv = convert_df(df)
+demo_csv = convert_df(df_csv)
 
 
 if menu == 'Dashboard':
@@ -101,9 +151,8 @@ if menu == 'Dashboard':
             options=survey_list
             )
             if selected_survey is not None:
-               
-                ref2 = ref.child(selected_comp)
-                survey = ref2.child(selected_survey).order_by_key().get()
+                ch = selected_comp+'/'+selected_survey
+                survey = ref.child(ch).order_by_key().get()
                 survey_passcode = str(survey["passcode"])
                 del survey["passcode"]
                 survey_lenght = len(survey)
@@ -111,34 +160,46 @@ if menu == 'Dashboard':
                     #st.subheader(str(survey_lenght) + " number of people attended this survey")
                     st.subheader("No one has attended this survey")
                 else:
-                    for keys,val in survey.items():
-                        row = []
-                        row.append(val["Qualification"])
-                        row.append(val["Age"])
-                        row.append(val["Experience"])
-                        row.append(val["Gender"])
-                        row.append(val["ENTHUSIASM"])
-                        row.append(val["WORKOVERLD"])
-                        row.append(val["ENJOYMNT"])
-                        row.append(val["UNPLSNTTASK"])
-                        row.append(val["TOUGH PERFORMNCE"])
-                        row.append(val["TIME MNGMNT"])
-                        row.append(val["DISAPNTMNT"])
-                        row.append(val["DOWNHRTED"])
-                        row.append(val["BOTHRED"])
-                        row.append(val["EMOSNAL STABLTY"])
-                        row.append(val["CHEERUL"])
-                        row.append(val["TIRED"])
-                        row.append(val["ABSNT MIND"])
-                        row.append(val["DISCUSS CO-WORKER"])
-                        row.append(val["PERSNL MTTR"])
-                        row.append(val["THOUGHT OF LEAVING"])
-                        row.append(val["LESS EFFORT"])
-                        row.append(val['Satisfaction'])
+                    for vals in survey:
+                        val = survey[vals]
+                        row = [
+                              val["Qualification"],val["Age"],val["Experience"],val["Gender"],
+                              val["ENTHUSIASM"],val["WORKOVERLD"],val["ENJOYMNT"],val["UNPLSNTTASK"],
+                              val["TOUGH PERFORMNCE"],val["TIME MNGMNT"],val["DISAPNTMNT"],
+                              val["DOWNHRTED"],val["BOTHRED"],val["EMOSNAL STABLTY"],
+                              val["CHEERUL"],val["TIRED"],val["ABSNT MIND"],val["DISCUSS CO-WORKER"],
+                              val["PERSNL MTTR"],val["THOUGHT OF LEAVING"],
+                              val["LESS EFFORT"],val["Satisfaction"]
+                          ]
+                        print(type(val))
+                        # row.append(val['Qualification'])
+                        # row.append(val['Age'])
+                        # row.append(val['Experience'])
+                        # row.append(val['Gender'])
+                        # row.append(val['ENTHUSIASM'])
+                        # row.append(val['WORKOVERLD'])
+                        # row.append(val['ENJOYMNT'])
+                        # row.append(val['UNPLSNTTASK'])
+                        # row.append(val['TOUGH PERFORMNCE'])
+                        # row.append(val['TIME MNGMNT'])
+                        # row.append(val['DISAPNTMNT'])
+                        # row.append(val['DOWNHRTED'])
+                        # row.append(val['BOTHRED'])
+                        # row.append(val['EMOSNAL STABLTY'])
+                        # row.append(val['CHEERUL'])
+                        # row.append(val['TIRED'])
+                        # row.append(val['ABSNT MIND'])
+                        # row.append(val['DISCUSS CO-WORKER'])
+                        # row.append(val['PERSNL MTTR'])
+                        # row.append(val['THOUGHT OF LEAVING'])
+                        # row.append(val['LESS EFFORT'])
+                        # row.append(val['Satisfaction'])
                         df.loc[len(df.index)] = row
+                        #df = df.append(val, ignore_index = True)
+
     female = df['Gender'].tolist().count('Female')
     male = df['Gender'].tolist().count('Male')
-    ratio = str(male) +":"+str(female)
+    ratio = str(male) +"    :"+str(female)
 
     placeholder = st.empty()
     with placeholder.container():
@@ -202,7 +263,7 @@ if menu == 'Create Survey':
                 with placeHolder:
                         st.success("Survey Created")
                         link = companey_name+'&survey='+survey_nam
-                        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(link)
+                        code = 'https://empsatisfaction.streamlit.app/Survey/?survey='+str(link)
                         st.code(code)
             else:
                 st.error(":error: Survey name already exist")
@@ -241,30 +302,37 @@ if menu == 'Manage Surveys':
         col1, col2 = st.columns([7, 1])
         with col1:
             st.write("Survey Link")
-            code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
+            survey_name = str(selected_survey)
+            survey_nam = survey_name.replace(" ", "_")
+            link = selected_comp+'&survey='+survey_nam
+            code = 'https://empsatisfaction.streamlit.app/Survey/?survey='+str(link)
             st.code(code)
         with col2:
             st.write("Delete Survey")
             if st.button('Delete'):
                 st.write("Deleted")
-        row2_col1, row2_col2 = st.columns([3,5])
+        row2_col1, row2_col2 = st.columns([5,5])
         uploaded_file = None
         with row2_col1:            
             uploaded_file = st.file_uploader("Choose a CSV file", accept_multiple_files=False, type = ['csv'])
 
         with row2_col2:
             if uploaded_file is not None:
-                csv = pd.read_csv(uploaded_file)
-                st.dataframe(csv)
+                uploaded_csv = pd.read_csv(uploaded_file)
+                st.dataframe(uploaded_csv)
+                
+                if st.button("Upload data"):
+                    uplaod_data_from_csv(uploaded_csv,selected_comp,selected_survey)
             else:
                 st.subheader("Please use the refarence Templete.csv")
                 st.download_button(
                     "Download Tamplate CSV",
-                    csv,
-                    "file.csv",
+                    demo_csv,
+                    "tamplate.csv",
                     "text/csv",
                     key='download-csv'
                 )
+        
 
 # ---- MAINPAGE ----
 
