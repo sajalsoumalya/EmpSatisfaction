@@ -2,7 +2,7 @@ streamlit
 pandas
 pickle5
 numpy
-sklearn
+scikit-learn
 firebase_admin
 pgen2
 plotly
