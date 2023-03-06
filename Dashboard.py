@@ -66,12 +66,11 @@ menu = option_menu(None, ["Dashboard", "Create Survey","Manage Surveys"],
     icons=['house', 'cloud-upload','gear'], 
     menu_icon="cast", default_index=0, orientation="horizontal")
 
-st.title("Employee Satisfaction Dashboard")
-st.markdown("##")
 #x1 = pd.ExcelFile("./survey.xlsx")
 selected_survey = ''
 
 if menu == 'Dashboard':
+    st.title("Employee Satisfaction Dashboard")
     survey_list = get_survey_list()
     selected_survey = st.selectbox(
     "Select The Survey:",
@@ -91,7 +90,6 @@ if menu == 'Dashboard':
         else:
             satis = []
             df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","PRESENT JOB FEELING","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
-            #["Qualification","Age","Experience""Gender","PRESENT JOB FEELING","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT"]
             for keys,val in survey.items():
                 satis.append(val['Satisfaction'])
                 row = []
@@ -136,7 +134,12 @@ if menu == 'Dashboard':
                 fig_col1, fig_col2 = st.columns(2)
                 with fig_col1:
                     st.markdown("### Density Heatmap")
-                    fig = px.density_heatmap(data_frame=df, y = 'Age', x = 'Satisfaction')
+                    feature_list = df.columns.values.tolist()
+                    selected_feature = st.selectbox(
+                    "Select The Survey:",
+                    options=feature_list
+                    )
+                    fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
                     st.write(fig)
                 with fig_col2:
                     st.markdown("### Age Histogram")
@@ -146,6 +149,7 @@ if menu == 'Dashboard':
                 st.dataframe(df)
                 time.sleep(1)
 if menu == 'Create Survey':
+    st.title("Create a Survey")
     placeHolder = st.empty()
     with placeHolder.form("create_survey"):
         email = st.text_input('Email',placeholder="Enter your Email")
@@ -168,6 +172,7 @@ if menu == 'Create Survey':
         else:
             st.error(":error: Survey name already exist")
 if menu == 'Manage Surveys':
+    st.title("Manage Your Survey")
     survey_list = get_survey_list()
     selected_survey = st.selectbox(
     "Select Any Survey From the Dropdown",
