@@ -46,8 +46,6 @@ def get_curent_url():
 #     # Add 'hour' column to dataframe
 #     #df["hour"] = pd.to_datetime(df["Time"], format="%H:%M:%S").dt.hour
 #     return df
-
-@st.cache_data
 def check(key,name):
     k = True
     surveyref = db.reference('Survey/'+name)
@@ -55,14 +53,13 @@ def check(key,name):
     length = len(list(value.keys()))
     if(length>0):
         k=False
-    
     return k
 #function to get the list of Surveys
-@st.cache_data
+
 def get_company_list():
     company_list = ref.order_by_key().get()
     return list(company_list.keys())
-@st.cache_data
+
 def get_survey_list(cmp):
     ref2 = ref.child(cmp)
     survey_list = ref2.order_by_key().get()
@@ -76,17 +73,13 @@ menu = option_menu(None, ["Dashboard", "Create Survey","Manage Surveys"],
     icons=['house', 'cloud-upload','gear'], 
     menu_icon="cast", default_index=0, orientation="horizontal")
 
-#x1 = pd.ExcelFile("./survey.xlsx")
-selected_comp = ''
-comp_email = ''
-selected_survey = ''
-survey_passcode = ''
-df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","PRESENT JOB FEELING","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
+selected_comp = None
+comp_email = None
+selected_survey = None
+survey_passcode = None
+df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
 
-tempo = pd.read_csv("template.csv")
-
-@st.cache_resource
-def convert_df(tempo):
+def convert_df(df):
    return df.to_csv(index=False).encode('utf-8')
 csv = convert_df(df)
 
@@ -107,42 +100,42 @@ if menu == 'Dashboard':
             "Select Your survey:",
             options=survey_list
             )
-            slink = selected_comp+'/'+selected_survey
-            survey = ref.child(slink).order_by_key().get()
-            survey_passcode = survey["passcode"]
-            del survey["passcode"]
-            survey_lenght = len(survey)
-        
-            if(survey_lenght<=0):
-                #st.subheader(str(survey_lenght) + " number of people attended this survey")
-                st.subheader("No one has attended this survey")
-            else:
-                for keys,val in survey.items():
-                    row = []
-                    row.append(val["Qualification"])
-                    row.append(val["Age"])
-                    row.append(val["Experience"])
-                    row.append(val["Gender"])
-                    row.append(val["PRESENT JOB FEELING"])
-                    row.append(val["ENTHUSIASM"])
-                    row.append(val["WORKOVERLD"])
-                    row.append(val["ENJOYMNT"])
-                    row.append(val["UNPLSNTTASK"])
-                    row.append(val["TOUGH PERFORMNCE"])
-                    row.append(val["TIME MNGMNT"])
-                    row.append(val["DISAPNTMNT"])
-                    row.append(val["DOWNHRTED"])
-                    row.append(val["BOTHRED"])
-                    row.append(val["EMOSNAL STABLTY"])
-                    row.append(val["CHEERUL"])
-                    row.append(val["TIRED"])
-                    row.append(val["ABSNT MIND"])
-                    row.append(val["DISCUSS CO-WORKER"])
-                    row.append(val["PERSNL MTTR"])
-                    row.append(val["THOUGHT OF LEAVING"])
-                    row.append(val["LESS EFFORT"])
-                    row.append(val['Satisfaction'])
-                    df.loc[len(df.index)] = row
+            if selected_survey is not None:
+               
+                ref2 = ref.child(selected_comp)
+                survey = ref2.child(selected_survey).order_by_key().get()
+                survey_passcode = str(survey["passcode"])
+                del survey["passcode"]
+                survey_lenght = len(survey)
+                if(survey_lenght<=0):
+                    #st.subheader(str(survey_lenght) + " number of people attended this survey")
+                    st.subheader("No one has attended this survey")
+                else:
+                    for keys,val in survey.items():
+                        row = []
+                        row.append(val["Qualification"])
+                        row.append(val["Age"])
+                        row.append(val["Experience"])
+                        row.append(val["Gender"])
+                        row.append(val["ENTHUSIASM"])
+                        row.append(val["WORKOVERLD"])
+                        row.append(val["ENJOYMNT"])
+                        row.append(val["UNPLSNTTASK"])
+                        row.append(val["TOUGH PERFORMNCE"])
+                        row.append(val["TIME MNGMNT"])
+                        row.append(val["DISAPNTMNT"])
+                        row.append(val["DOWNHRTED"])
+                        row.append(val["BOTHRED"])
+                        row.append(val["EMOSNAL STABLTY"])
+                        row.append(val["CHEERUL"])
+                        row.append(val["TIRED"])
+                        row.append(val["ABSNT MIND"])
+                        row.append(val["DISCUSS CO-WORKER"])
+                        row.append(val["PERSNL MTTR"])
+                        row.append(val["THOUGHT OF LEAVING"])
+                        row.append(val["LESS EFFORT"])
+                        row.append(val['Satisfaction'])
+                        df.loc[len(df.index)] = row
     female = df['Gender'].tolist().count('Female')
     male = df['Gender'].tolist().count('Male')
     ratio = str(male) +":"+str(female)
@@ -256,9 +249,7 @@ if menu == 'Manage Surveys':
                 st.write("Deleted")
         row2_col1, row2_col2 = st.columns([3,5])
         uploaded_file = None
-        with row2_col1:
-            
-            
+        with row2_col1:            
             uploaded_file = st.file_uploader("Choose a CSV file", accept_multiple_files=False, type = ['csv'])
 
         with row2_col2:

@@ -7,6 +7,7 @@ from sklearn import metrics
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import json
 
 
 import random
@@ -60,9 +61,9 @@ if (survey_dict_length>0):
                Gender = st.selectbox(
                     "Gender",
                     ('Male', 'Female'))
-          q1 = st.select_slider(
-               'I feel fairly well satisfied with my present job',
-               options=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree'])
+#          q1 = st.select_slider(
+#              'I feel fairly well satisfied with my present job',
+#               options=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree'])
           q2 = st.select_slider(
                'Most days I am enthusiastic about my work',
                options=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree'])
@@ -124,7 +125,7 @@ if (survey_dict_length>0):
                result.append(Age)
                result.append(Experience)
                result.append(Gender)
-               result.append(q1)
+#               result.append(q1)
                result.append(q2)
                result.append(q3)
                result.append(q4)
@@ -143,21 +144,25 @@ if (survey_dict_length>0):
                result.append(q17)
                result.append(q18)
                result.append(q19)
-               s={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]}
+               s={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18]}
                #print(s)
                dataframe=pd.DataFrame(s,index=[1])
                #updating Data
-               class_value=y=dataframe["PRESENT JOB FEELING"].values
-               features=x=dataframe[dataframe.columns[5:]].values
-               print("value",y,x)
+#               class_value=y=dataframe["PRESENT JOB FEELING"].values
+               features=x=dataframe[dataframe.columns[4:]].values
+#               print("value",y,x)
                loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
                result1 = loaded_model.predict(x)
-               final_pred=metrics.accuracy_score(y,result1)
-               final_pred=int(final_pred)
-               print(metrics.accuracy_score(y,result1))
+#               final_pred=metrics.accuracy_score(y,result1)
+#               final_pred=int(final_pred)
+#              print(metrics.accuracy_score(y,result1))
+               #res_index = int(result[0])-1
+               #print(res_index)
+               result_index = json.dumps(int(result1[0]))
+               result_index = int(result_index)
+               print(type(result_index))
                list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
-               #st.write('You ',list_val[final_pred-1],'with you current job')
-               data={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18],"Satisfaction":list_val[final_pred-1]}
+               data={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18],"Satisfaction":list_val[result_index-1]}
                slink = companey_name+'/'+survey
                ref.child(slink).push().set(data)
                placeholder.empty()
