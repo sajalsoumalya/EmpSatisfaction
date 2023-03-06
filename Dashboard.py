@@ -128,8 +128,8 @@ if menu == 'Dashboard':
                 kpi1, kpi2, kpi3 = st.columns(3)
                 # fill in those three columns with respective metrics or KPIs 
                 kpi1.metric(label="Compeny Name 💍", value=cname, delta=cemail)
-                kpi2.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male/Female')
-                kpi3.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
+                kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
+                kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
 
                 # create two columns for charts 
 
