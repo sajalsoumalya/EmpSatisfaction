@@ -173,16 +173,35 @@ if menu == 'Create Survey':
             st.error(":error: Survey name already exist")
 if menu == 'Manage Surveys':
     st.title("Manage Your Survey")
-    survey_list = get_survey_list()
-    selected_survey = st.selectbox(
-    "Select Any Survey From the Dropdown",
-    options=survey_list
-    )
+    row1_col1, row1_col2, row1_col3 = st.columns(3)
+    with row1_col1:
+        survey_list = get_survey_list()
+        selected_survey = st.selectbox(
+        "Select Any Survey From the Dropdown",
+        options=survey_list
+        )
+    with row1_col2:
+        survey = ref.child(selected_survey).order_by_key().get()
+        companey_name = st.text_input('Company Name',placeholder="Companey Name", value =survey["companey_name"],disabled=True )
+    with row1_col3: 
+        email = st.text_input('Email',placeholder="Enter your Email", value=survey["email"],disabled=True)
     if selected_survey is not None:
         survey = ref.child(selected_survey).order_by_key().get()
-
-    st.write("Survey Link")
-    code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
-    st.code(code)
+        col1, col2 = st.columns([7, 1])
+        with col1:
+            st.write("Survey Link")
+            code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(selected_survey)
+            st.code(code)
+        with col2:
+            st.write("Delete Survey")
+            if st.button('Delete'):
+                st.write("Deleted")
+        row2_col1, row2_col2 = st.columns([3,5])
+        with row2_col1:
+            uploaded_files = st.file_uploader("Choose a CSV file", accept_multiple_files=False)
+        with row2_col2:
+            if uploaded_files is not None:
+                st.write("filename:", uploaded_file.name)
+                st.write(bytes_data)
 # ---- MAINPAGE ----
 
