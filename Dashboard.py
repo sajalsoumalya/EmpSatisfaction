@@ -29,12 +29,13 @@ if not firebase_admin._apps:
 ref = db.reference('Survey/')
 
 #to get the url of the current page 
+@st.cache_data
 def get_curent_url():
     driver = webdriver.Chrome()
     get_url = driver.current_url
     return get_url
     # ---- READ EXCEL ----
-@st.cache
+
 
 # def get_data_from_excel(sheet_name):
 #     df = pd.read_excel(
@@ -46,7 +47,7 @@ def get_curent_url():
 #     #df["hour"] = pd.to_datetime(df["Time"], format="%H:%M:%S").dt.hour
 #     return df
 
-
+@st.cache_data
 def check(key,name):
     k = True
     surveyref = db.reference('Survey/'+name)
@@ -57,10 +58,11 @@ def check(key,name):
     
     return k
 #function to get the list of Surveys
+@st.cache_data
 def get_company_list():
     company_list = ref.order_by_key().get()
     return list(company_list.keys())
-
+@st.cache_data
 def get_survey_list(cmp):
     ref2 = ref.child(cmp)
     survey_list = ref2.order_by_key().get()
@@ -80,7 +82,15 @@ comp_email = ''
 selected_survey = ''
 survey_passcode = ''
 df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","PRESENT JOB FEELING","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
-df.to_csv('template.csv')
+
+tempo = pd.read_csv("template.csv")
+
+@st.cache_resource
+def convert_df(tempo):
+   return df.to_csv(index=False).encode('utf-8')
+csv = convert_df(df)
+
+
 if menu == 'Dashboard':
     st.title("Employee Satisfaction Dashboard")
     r_col1,r_col2 = st.columns(2)
@@ -248,14 +258,22 @@ if menu == 'Manage Surveys':
         uploaded_file = None
         with row2_col1:
             
-            st.write("Download the Templete csv [click here](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py)")
+            
             uploaded_file = st.file_uploader("Choose a CSV file", accept_multiple_files=False, type = ['csv'])
 
         with row2_col2:
             if uploaded_file is not None:
                 csv = pd.read_csv(uploaded_file)
                 st.dataframe(csv)
-
+            else:
+                st.subheader("Please use the refarence Templete.csv")
+                st.download_button(
+                    "Download Tamplate CSV",
+                    csv,
+                    "file.csv",
+                    "text/csv",
+                    key='download-csv'
+                )
 
 # ---- MAINPAGE ----
 
