@@ -133,19 +133,15 @@ if menu == 'Dashboard':
 
                 # create two columns for charts 
 
-                fig_col1, fig_col2, fig_col3 = st.columns(3)
+                fig_col1, fig_col2 = st.columns(2)
                 with fig_col1:
                     st.markdown("### Density Heatmap")
                     fig = px.density_heatmap(data_frame=df, y = 'Age', x = 'Satisfaction')
                     st.write(fig)
                 with fig_col2:
                     st.markdown("### Age Histogram")
-                    fig2 = px.histogram(data_frame = df, x = 'Age')
+                    fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
                     st.write(fig2)
-                with fig_col3:
-                    st.markdown("### Pie of Satisfaction")
-                    #fig3 = px.pie(data_frame = df, values=sizes)
-                    #st.write(fig3)
                 st.markdown("### Detailed Data View")
                 st.dataframe(df)
                 time.sleep(1)
