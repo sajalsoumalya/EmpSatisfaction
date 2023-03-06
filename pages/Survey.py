@@ -21,12 +21,15 @@ dt={'Strongly Disagree':1,"Disagree":2,"Neutral":3,"agree":4,"strongly agree":5}
 st.set_page_config(page_title='Emp Satisfaction',layout="centered")
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
 survey_dict = st.experimental_get_query_params()
 survey_dict_length = len(survey_dict)
 surveys= list(*survey_dict.values())
+
 if (survey_dict_length>0):
-     survey = str(surveys[0])
-     st.header('Employee Satisfaction')
+     survey = str(surveys[1])
+     companey_name = str(surveys[0])
+     st.header('Survey on Employee Satisfaction by '+companey_name)
      result = []
 
      predict = ''
@@ -155,7 +158,8 @@ if (survey_dict_length>0):
                list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
                #st.write('You ',list_val[final_pred-1],'with you current job')
                data={"Qualification":Qualification,"Age":Age,"Experience":Experience,"Gender":Gender,"PRESENT JOB FEELING":dt[q1],"ENTHUSIASM":dt[q2],"WORKOVERLD":dt[q3],"ENJOYMNT":dt[q4],"UNPLSNTTASK":dt[q5],"TOUGH PERFORMNCE":dt[q6],"TIME MNGMNT":dt[q7],"DISAPNTMNT":dt[q8],"DOWNHRTED":dt[q9],"BOTHRED":dt[q10],"EMOSNAL STABLTY":dt[q11],"CHEERUL":dt[q12],"TIRED":dt[q13],"ABSNT MIND":dt[q14],"DISCUSS CO-WORKER":dt[q15],"PERSNL MTTR":dt[q16],"THOUGHT OF LEAVING":dt[q17],"LESS EFFORT":dt[q18],"Satisfaction":list_val[final_pred-1]}
-               ref.child(survey).push().set(data)
+               slink = companey_name+'/'+survey
+               ref.child(slink).push().set(data)
                placeholder.empty()
                with placeholder:
                     st.success("Congrts! You have succesfully completed the survey")

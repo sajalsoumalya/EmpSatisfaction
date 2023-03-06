@@ -47,18 +47,26 @@ def get_curent_url():
 #     return df
 
 
-def check(key):
+def check(key,name):
     k = True
-    value = ref.order_by_key().equal_to(key).get()
+    surveyref = db.reference('Survey/'+name)
+    value = surveyref.order_by_key().equal_to(key).get()
     length = len(list(value.keys()))
     if(length>0):
         k=False
     
     return k
 #function to get the list of Surveys
-def get_survey_list():
-    survey_list = ref.order_by_key().get()
-    return list(survey_list.keys())
+def get_company_list():
+    company_list = ref.order_by_key().get()
+    return list(company_list.keys())
+
+def get_survey_list(cmp):
+    ref2 = ref.child(cmp)
+    survey_list = ref2.order_by_key().get()
+    email = survey_list["email"]
+    del survey_list["email"]
+    return list(survey_list.keys()),email
 
 from streamlit_option_menu import option_menu #for Menubar
 
@@ -67,124 +75,164 @@ menu = option_menu(None, ["Dashboard", "Create Survey","Manage Surveys"],
     menu_icon="cast", default_index=0, orientation="horizontal")
 
 #x1 = pd.ExcelFile("./survey.xlsx")
+selected_comp = ''
+comp_email = ''
 selected_survey = ''
-
+survey_passcode = ''
+df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","PRESENT JOB FEELING","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
+df.to_csv('template.csv')
 if menu == 'Dashboard':
     st.title("Employee Satisfaction Dashboard")
-    survey_list = get_survey_list()
-    selected_survey = st.selectbox(
-    "Select The Survey:",
-    options=survey_list
-    )
-    if selected_survey is not None:
-        survey = ref.child(selected_survey).order_by_key().get()
-        cname = survey["companey_name"]
-        cemail = survey["email"]
-        del survey["companey_name"]
-        del survey["email"]
-        survey_lenght = len(survey)
-       
-        if(survey_lenght<=0):
-            #st.subheader(str(survey_lenght) + " number of people attended this survey")
-            st.subheader("No one has attended this survey")
-        else:
-            satis = []
-            df = pd.DataFrame(columns=["Qualification","Age","Experience","Gender","PRESENT JOB FEELING","ENTHUSIASM","WORKOVERLD","ENJOYMNT","UNPLSNTTASK","TOUGH PERFORMNCE","TIME MNGMNT","DISAPNTMNT","DOWNHRTED","BOTHRED","EMOSNAL STABLTY","CHEERUL","TIRED","ABSNT MIND","DISCUSS CO-WORKER","PERSNL MTTR","THOUGHT OF LEAVING","LESS EFFORT","Satisfaction"])
-            for keys,val in survey.items():
-                satis.append(val['Satisfaction'])
-                row = []
-                row.append(val["Qualification"])
-                row.append(val["Age"])
-                row.append(val["Experience"])
-                row.append(val["Gender"])
-                row.append(val["PRESENT JOB FEELING"])
-                row.append(val["ENTHUSIASM"])
-                row.append(val["WORKOVERLD"])
-                row.append(val["ENJOYMNT"])
-                row.append(val["UNPLSNTTASK"])
-                row.append(val["TOUGH PERFORMNCE"])
-                row.append(val["TIME MNGMNT"])
-                row.append(val["DISAPNTMNT"])
-                row.append(val["DOWNHRTED"])
-                row.append(val["BOTHRED"])
-                row.append(val["EMOSNAL STABLTY"])
-                row.append(val["CHEERUL"])
-                row.append(val["TIRED"])
-                row.append(val["ABSNT MIND"])
-                row.append(val["DISCUSS CO-WORKER"])
-                row.append(val["PERSNL MTTR"])
-                row.append(val["THOUGHT OF LEAVING"])
-                row.append(val["LESS EFFORT"])
-                row.append(val['Satisfaction'])
-                df.loc[len(df.index)] = row
-            female = df['Gender'].tolist().count('Female')
-            male = df['Gender'].tolist().count('Male')
-            ratio = str(male) +":"+str(female)
-            placeholder = st.empty()
-            with placeholder.container():
-                # create three columns
-                kpi1, kpi2, kpi3 = st.columns(3)
-                # fill in those three columns with respective metrics or KPIs 
-                kpi1.metric(label="Compeny Name 💍", value=cname, delta=cemail)
-                kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
-                kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
+    r_col1,r_col2 = st.columns(2)
+    with r_col1:
+        company_list = get_company_list()
+        selected_comp = st.selectbox(
+        "Select Your Company:",
+        options=company_list
+        )
+    with r_col2:
+        if selected_comp is not None:
+            survey_list, comp_email = get_survey_list(selected_comp)
+            selected_survey = st.selectbox(
+            "Select Your survey:",
+            options=survey_list
+            )
+            slink = selected_comp+'/'+selected_survey
+            survey = ref.child(slink).order_by_key().get()
+            survey_passcode = survey["passcode"]
+            del survey["passcode"]
+            survey_lenght = len(survey)
+        
+            if(survey_lenght<=0):
+                #st.subheader(str(survey_lenght) + " number of people attended this survey")
+                st.subheader("No one has attended this survey")
+            else:
+                for keys,val in survey.items():
+                    row = []
+                    row.append(val["Qualification"])
+                    row.append(val["Age"])
+                    row.append(val["Experience"])
+                    row.append(val["Gender"])
+                    row.append(val["PRESENT JOB FEELING"])
+                    row.append(val["ENTHUSIASM"])
+                    row.append(val["WORKOVERLD"])
+                    row.append(val["ENJOYMNT"])
+                    row.append(val["UNPLSNTTASK"])
+                    row.append(val["TOUGH PERFORMNCE"])
+                    row.append(val["TIME MNGMNT"])
+                    row.append(val["DISAPNTMNT"])
+                    row.append(val["DOWNHRTED"])
+                    row.append(val["BOTHRED"])
+                    row.append(val["EMOSNAL STABLTY"])
+                    row.append(val["CHEERUL"])
+                    row.append(val["TIRED"])
+                    row.append(val["ABSNT MIND"])
+                    row.append(val["DISCUSS CO-WORKER"])
+                    row.append(val["PERSNL MTTR"])
+                    row.append(val["THOUGHT OF LEAVING"])
+                    row.append(val["LESS EFFORT"])
+                    row.append(val['Satisfaction'])
+                    df.loc[len(df.index)] = row
+    female = df['Gender'].tolist().count('Female')
+    male = df['Gender'].tolist().count('Male')
+    ratio = str(male) +":"+str(female)
 
-                # create two columns for charts 
+    placeholder = st.empty()
+    with placeholder.container():
+        # create three columns
+        kpi1, kpi2, kpi3 = st.columns(3)
+        # fill in those three columns with respective metrics or KPIs 
+        kpi1.metric(label="Compeny Name 💍", value=selected_comp, delta=comp_email)
+        kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
+        kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
 
-                fig_col1, fig_col2 = st.columns(2)
-                with fig_col1:
-                    st.markdown("### Density Heatmap")
-                    feature_list = df.columns.values.tolist()
-                    selected_feature = st.selectbox(
-                    "Select The Survey:",
-                    options=feature_list
-                    )
-                    fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
-                    st.write(fig)
-                with fig_col2:
-                    st.markdown("### Age Histogram")
-                    fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
-                    st.write(fig2)
-                st.markdown("### Detailed Data View")
-                st.dataframe(df)
-                time.sleep(1)
+        # create two columns for charts 
+
+        fig_col1, fig_col2 = st.columns(2)
+        with fig_col1:
+            st.markdown("### Density Heatmap")
+            feature_list = df.columns.values.tolist()
+            selected_feature = st.selectbox(
+            "Select The Survey:",
+            options=feature_list
+            )
+            fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
+            st.write(fig)
+        with fig_col2:
+            st.markdown("### Age Histogram")
+            fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
+            st.write(fig2)
+        st.markdown("### Detailed Data View")
+        st.dataframe(df)
+        time.sleep(1)
 if menu == 'Create Survey':
     st.title("Create a Survey")
     placeHolder = st.empty()
-    with placeHolder.form("create_survey"):
-        email = st.text_input('Email',placeholder="Enter your Email")
-        survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
-        companey_name = st.text_input('Company Name',placeholder="Enter your Companey Name")
+    with placeHolder.form("Enter the Following Details"):
+        companey_name = None
+        email = None
+        survey_name= None
+        passcode = None
+        submitted = None
+        row1_col1, row1_col2 = st.columns(2)
+        with row1_col1:
+            companey_name = st.text_input('Company Name',placeholder="Enter your Companey Name")
+        with row1_col2:
+            email = st.text_input('Email',placeholder="Enter your Email")
+        row2_col1, row2_col2 = st.columns(2)
+        with row2_col1:
+            survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
+        with row2_col2:
+            passcode = st.text_input('Survey Passcode',type="password", key="password")
         submitted = st.form_submit_button("Create")
-    if submitted:
-        value = check(survey_name)
-        if value == True:
-            survey_name = str(survey_name)
-            survey_nam = survey_name.replace(" ", "_")
-            ref.child(survey_nam).set({
-                "companey_name":companey_name,
-                "email":email
-            })
-            with placeHolder:
-                    st.success("Survey Created")
-                    code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(survey_nam)
-                    st.code(code)
-        else:
-            st.error(":error: Survey name already exist")
+        if submitted:
+            #companey_nam = check(companey_nam)
+            survey = check(survey_name,companey_name)
+            if survey == True:
+                survey_name = str(survey_name)
+                survey_nam = survey_name.replace(" ", "_")
+                ref.child(companey_name).set({
+                    "email":email,
+                })
+                ch = companey_name+'/'+survey_nam
+                ref.child(ch).set({"passcode":passcode})
+                with placeHolder:
+                        st.success("Survey Created")
+                        link = companey_name+'&survey='+survey_nam
+                        code = 'https://sajalsoumalya-empsatisfaction-dashboard-vda1pn.streamlitapp.com/Survey/?survey='+str(link)
+                        st.code(code)
+            else:
+                st.error(":error: Survey name already exist")
 if menu == 'Manage Surveys':
+    selected_comp = None
+    selected_survey = None
+    survey_list = None
+    df = []
     st.title("Manage Your Survey")
-    row1_col1, row1_col2, row1_col3 = st.columns(3)
+    row1_col1, row1_col2, row1_col3, = st.columns(3)
     with row1_col1:
-        survey_list = get_survey_list()
-        selected_survey = st.selectbox(
-        "Select Any Survey From the Dropdown",
-        options=survey_list
+        company_list = get_company_list()
+        selected_comp = st.selectbox(
+        "Select Your Company:",
+        options=company_list
         )
     with row1_col2:
-        survey = ref.child(selected_survey).order_by_key().get()
-        companey_name = st.text_input('Company Name',placeholder="Companey Name", value =survey["companey_name"],disabled=True )
-    with row1_col3: 
-        email = st.text_input('Email',placeholder="Enter your Email", value=survey["email"],disabled=True)
+        if selected_comp is not None:
+            selected_survey = None
+            survey_list, comp_email = get_survey_list(selected_comp)
+            selected_survey = st.selectbox(
+            "Select Your survey:",
+            options=survey_list
+            )
+            slink = selected_comp+'/'+selected_survey
+            survey = ref.child(slink).order_by_key().get()
+            survey_passcode = survey["passcode"]
+            del survey["passcode"]
+            survey_lenght = len(survey)
+    with row1_col3:
+        kp1,kp2= st.columns(2)
+        kp1.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
+        kp2.metric(label="Survey Count ", value= len(survey_list), delta = 'Surveys')
     if selected_survey is not None:
         survey = ref.child(selected_survey).order_by_key().get()
         col1, col2 = st.columns([7, 1])
@@ -197,11 +245,17 @@ if menu == 'Manage Surveys':
             if st.button('Delete'):
                 st.write("Deleted")
         row2_col1, row2_col2 = st.columns([3,5])
+        uploaded_file = None
         with row2_col1:
-            uploaded_files = st.file_uploader("Choose a CSV file", accept_multiple_files=False)
+            
+            st.write("Download the Templete csv [click here](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py)")
+            uploaded_file = st.file_uploader("Choose a CSV file", accept_multiple_files=False, type = ['csv'])
+
         with row2_col2:
-            if uploaded_files is not None:
-                st.write("filename:", uploaded_file.name)
-                st.write(bytes_data)
+            if uploaded_file is not None:
+                csv = pd.read_csv(uploaded_file)
+                st.dataframe(csv)
+
+
 # ---- MAINPAGE ----
 
