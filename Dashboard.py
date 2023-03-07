@@ -81,6 +81,7 @@ comp_email = None
 selected_survey = None
 survey_passcode = None
 uploaded_csv = None
+survey_lenght = None
 
 def uplaod_data_from_csv(df, comp, survey):
     features=x=df[df.columns[4:]].values
@@ -88,9 +89,7 @@ def uplaod_data_from_csv(df, comp, survey):
     result1 = loaded_model.predict(x)
     result_index = json.dumps(int(result1[0]))
     result_index = int(result_index)-1
-    print(result_index)
     list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
-    print(list_val[result_index])
     slink = comp+'/'+survey
     for ind in df.index:
         s={
@@ -153,27 +152,34 @@ with log_tab1:
     name, authentication_status, username = authenticator.login('Login', 'main')
     if st.session_state["authentication_status"]:
         st.markdown(
-    """
-<style>
-    [data-baseweb="tab-list"],
-    [data-baseweb="tab-border"]{
-        display:none;
-    }
-
-    .stTabs{
-        display:block;
-    }</style>
-""",
-    unsafe_allow_html=True,
-)
+            """
+            <style>
+                [data-baseweb="tab-list"],
+                [data-baseweb="tab-border"]{
+                    display:none;
+                }
+                .css-k1ih3n{
+                    padding:0rem 5rem 1rem 5rem;
+                }
+                .css-upt41q iframe{
+                    display:block;
+                }
+                .st-cy{
+                    padding-top:0;
+                }
+                .stTabs{
+                    display:block;
+                }</style>
+            """,unsafe_allow_html=True,)
+        tit_col1,tit_col2 = st.columns([8,2])
+        tit_col1.subheader(f'Welcome to Employee Satisfaction Dashboard Mr.*{st.session_state["name"]}*')
+        with tit_col2:
+            authenticator.logout('Logout', 'main')
         menu = option_menu(None, ["Dashboard", "Create Survey","Manage Surveys"], 
         icons=['house', 'cloud-upload','gear','user'], 
         menu_icon="cast", default_index=0, orientation="horizontal")
         if menu == 'Dashboard':
-            tit_col1,tit_col2 = st.columns([8,2])
-            tit_col1.subheader(f'Welcome to Employee Satisfaction Dashboard Mr.*{st.session_state["name"]}*')
-            with tit_col2:
-                authenticator.logout('Logout', 'main')
+            
             r_col1,r_col2 = st.columns(2)
             with r_col1:
                 company_list = get_company_list()
@@ -193,11 +199,8 @@ with log_tab1:
                         survey = ref.child(ch).order_by_key().get()
                         survey_passcode = str(survey["passcode"])
                         del survey["passcode"]
-                        survey_lenght = len(survey)
-                        if(survey_lenght<=0):
-                            #st.subheader(str(survey_lenght) + " number of people attended this survey")
-                            st.subheader("No one has attended this survey")
-                        else:
+                        if(survey_passcode == str(st.session_state["username"]) ):
+                            survey_lenght = len(survey)
                             for vals in survey:
                                 val = survey[vals]
                                 row = [
@@ -209,7 +212,6 @@ with log_tab1:
                                     val["PERSNL MTTR"],val["THOUGHT OF LEAVING"],
                                     val["LESS EFFORT"],val["Satisfaction"]
                                 ]
-                                print(type(val))
                                 # row.append(val['Qualification'])
                                 # row.append(val['Age'])
                                 # row.append(val['Experience'])
@@ -234,39 +236,52 @@ with log_tab1:
                                 # row.append(val['Satisfaction'])
                                 df.loc[len(df.index)] = row
                                 #df = df.append(val, ignore_index = True)
+            if(len(survey)<=0):
+                #st.subheader(str(survey_lenght) + " number of people attended this survey")
+                st.subheader("No one has attended this survey")
+            elif(survey_passcode != str(st.session_state["username"]) ):
+                st.markdown(
+                    """
+                    <style>
+                    .css-1m6fanh{
+                        display:block;
+                    }
+                    </style>
+                    """,unsafe_allow_html=True,)
+                st.subheader("You are are not authorized to access this survey")
+            else:
+                female = df['Gender'].tolist().count('Female')
+                male = df['Gender'].tolist().count('Male')
+                ratio = str(male) +"    :"+str(female)
 
-            female = df['Gender'].tolist().count('Female')
-            male = df['Gender'].tolist().count('Male')
-            ratio = str(male) +"    :"+str(female)
+                placeholder = st.empty()
+                with placeholder.container():
+                    # create three columns
+                    kpi1, kpi2, kpi3 = st.columns(3)
+                    # fill in those three columns with respective metrics or KPIs 
+                    kpi1.metric(label="Compeny Name 💍", value=selected_comp, delta=comp_email)
+                    kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
+                    kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
 
-            placeholder = st.empty()
-            with placeholder.container():
-                # create three columns
-                kpi1, kpi2, kpi3 = st.columns(3)
-                # fill in those three columns with respective metrics or KPIs 
-                kpi1.metric(label="Compeny Name 💍", value=selected_comp, delta=comp_email)
-                kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
-                kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
+                    # create two columns for charts 
 
-                # create two columns for charts 
-
-                fig_col1, fig_col2 = st.columns(2)
-                with fig_col1:
-                    st.markdown("### Density Heatmap")
-                    feature_list = df.columns.values.tolist()
-                    selected_feature = st.selectbox(
-                    "Select The Survey:",
-                    options=feature_list
-                    )
-                    fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
-                    st.write(fig)
-                with fig_col2:
-                    st.markdown("### Age Histogram")
-                    fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
-                    st.write(fig2)
-                st.markdown("### Detailed Data View")
-                st.dataframe(df)
-                time.sleep(1)
+                    fig_col1, fig_col2 = st.columns(2)
+                    with fig_col1:
+                        st.markdown("### Density Heatmap")
+                        feature_list = df.columns.values.tolist()
+                        selected_feature = st.selectbox(
+                        "Select The Survey:",
+                        options=feature_list
+                        )
+                        fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
+                        st.write(fig)
+                    with fig_col2:
+                        st.markdown("### Age Histogram")
+                        fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
+                        st.write(fig2)
+                    st.markdown("### Detailed Data View")
+                    st.dataframe(df)
+                    time.sleep(1)
         if menu == 'Create Survey':
             st.title("Create a Survey")
             placeHolder = st.empty()
@@ -285,7 +300,7 @@ with log_tab1:
                 with row2_col1:
                     survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
                 with row2_col2:
-                    passcode = st.text_input('Survey Passcode',type="password", key="password")
+                    passcode = st.text_input('username',type="password", key="password", value=st.session_state["username"])
                 submitted = st.form_submit_button("Create")
                 if submitted:
                     #companey_nam = check(companey_nam)
