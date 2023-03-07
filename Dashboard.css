@@ -19,7 +19,7 @@
     flex-direction: row;
 }
 
-[data-testid="stForm"]{
+/*[data-testid="stForm"]{
     max-width: 400px;
     width: 100%;
     margin-left: auto;
@@ -29,4 +29,4 @@
 .css-12ttj6m{
     max-width:1200px;
     width: 100%;
-}
+}*/
