@@ -6,8 +6,8 @@ credentials:
   usernames:
     crio:
       email: crio77impex@gmail.com
-      name: Crio
-      password: $2b$12$4vwbnC7Oasadm4xL6lFNc.QM12zs5MPciTG2ZrzRFlPZ0DH04aOg.
+      name: Crio IMPEX pvt Ltd
+      password: $2b$12$Ym6DXui9dq0qKNeiV9n9KebOhn3c.TQmtHfaBlja7AySXHJvIXUbW
 preauthorized:
   emails:
   - i@soumalya.in

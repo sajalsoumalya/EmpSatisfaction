@@ -77,7 +77,7 @@ from streamlit_option_menu import option_menu #for Menubar
 
 
 selected_comp = None
-comp_email = None
+comp_email = ''
 selected_survey = None
 survey_passcode = None
 uploaded_csv = None
@@ -147,7 +147,7 @@ authenticator = stauth.Authenticate(
 )
 
 #authenticator = stauth.Authenticate(names,usernames,hashed_passwords,"sales_dashboard", "abcdef",cookie_expiry_days= 30)
-log_tab1,log_tab2,log_tab3,log_tab4 = st.tabs(["Login","Register","Forget Password","Change Password"])
+log_tab1,log_tab2,log_tab3 = st.tabs(["Login","Register","Forget Password",])
 with log_tab1:
     name, authentication_status, username = authenticator.login('Login', 'main')
     if st.session_state["authentication_status"]:
@@ -172,70 +172,63 @@ with log_tab1:
                 }</style>
             """,unsafe_allow_html=True,)
         tit_col1,tit_col2 = st.columns([8,2])
-        tit_col1.subheader(f'Welcome to Employee Satisfaction Dashboard Mr.*{st.session_state["name"]}*')
+        tit_col1.subheader(f'Welcome to Employee Satisfaction Dashboard ( *{st.session_state["name"]}* )')
         with tit_col2:
             authenticator.logout('Logout', 'main')
         menu = option_menu(None, ["Dashboard", "Create Survey","Manage Surveys"], 
         icons=['house', 'cloud-upload','gear','user'], 
         menu_icon="cast", default_index=0, orientation="horizontal")
+        selected_comp = st.session_state["name"]
         if menu == 'Dashboard':
-            
-            r_col1,r_col2 = st.columns(2)
-            with r_col1:
-                company_list = get_company_list()
-                selected_comp = st.selectbox(
-                "Select Your Company:",
-                options=company_list
+            if selected_comp is not None:
+                survey_list, comp_email = get_survey_list(selected_comp)
+                st.session_state['email'] = comp_email
+                selected_survey = st.selectbox(
+                "Select Your survey:",
+                options=survey_list
                 )
-            with r_col2:
-                if selected_comp is not None:
-                    survey_list, comp_email = get_survey_list(selected_comp)
-                    selected_survey = st.selectbox(
-                    "Select Your survey:",
-                    options=survey_list
-                    )
-                    if selected_survey is not None:
-                        ch = selected_comp+'/'+selected_survey
-                        survey = ref.child(ch).order_by_key().get()
-                        survey_passcode = str(survey["passcode"])
-                        del survey["passcode"]
-                        if(survey_passcode == str(st.session_state["username"]) ):
-                            survey_lenght = len(survey)
-                            for vals in survey:
-                                val = survey[vals]
-                                row = [
-                                    val["Qualification"],val["Age"],val["Experience"],val["Gender"],
-                                    val["ENTHUSIASM"],val["WORKOVERLD"],val["ENJOYMNT"],val["UNPLSNTTASK"],
-                                    val["TOUGH PERFORMNCE"],val["TIME MNGMNT"],val["DISAPNTMNT"],
-                                    val["DOWNHRTED"],val["BOTHRED"],val["EMOSNAL STABLTY"],
-                                    val["CHEERUL"],val["TIRED"],val["ABSNT MIND"],val["DISCUSS CO-WORKER"],
-                                    val["PERSNL MTTR"],val["THOUGHT OF LEAVING"],
-                                    val["LESS EFFORT"],val["Satisfaction"]
-                                ]
-                                # row.append(val['Qualification'])
-                                # row.append(val['Age'])
-                                # row.append(val['Experience'])
-                                # row.append(val['Gender'])
-                                # row.append(val['ENTHUSIASM'])
-                                # row.append(val['WORKOVERLD'])
-                                # row.append(val['ENJOYMNT'])
-                                # row.append(val['UNPLSNTTASK'])
-                                # row.append(val['TOUGH PERFORMNCE'])
-                                # row.append(val['TIME MNGMNT'])
-                                # row.append(val['DISAPNTMNT'])
-                                # row.append(val['DOWNHRTED'])
-                                # row.append(val['BOTHRED'])
-                                # row.append(val['EMOSNAL STABLTY'])
-                                # row.append(val['CHEERUL'])
-                                # row.append(val['TIRED'])
-                                # row.append(val['ABSNT MIND'])
-                                # row.append(val['DISCUSS CO-WORKER'])
-                                # row.append(val['PERSNL MTTR'])
-                                # row.append(val['THOUGHT OF LEAVING'])
-                                # row.append(val['LESS EFFORT'])
-                                # row.append(val['Satisfaction'])
-                                df.loc[len(df.index)] = row
-                                #df = df.append(val, ignore_index = True)
+                if selected_survey is not None:
+                    ch = selected_comp+'/'+selected_survey
+                    survey = ref.child(ch).order_by_key().get()
+                    survey_passcode = str(survey["passcode"])
+                    del survey["passcode"]
+                    if(survey_passcode == str(st.session_state["username"]) ):
+                        survey_lenght = len(survey)
+                        for vals in survey:
+                            val = survey[vals]
+                            row = [
+                                val["Qualification"],val["Age"],val["Experience"],val["Gender"],
+                                val["ENTHUSIASM"],val["WORKOVERLD"],val["ENJOYMNT"],val["UNPLSNTTASK"],
+                                val["TOUGH PERFORMNCE"],val["TIME MNGMNT"],val["DISAPNTMNT"],
+                                val["DOWNHRTED"],val["BOTHRED"],val["EMOSNAL STABLTY"],
+                                val["CHEERUL"],val["TIRED"],val["ABSNT MIND"],val["DISCUSS CO-WORKER"],
+                                val["PERSNL MTTR"],val["THOUGHT OF LEAVING"],
+                                val["LESS EFFORT"],val["Satisfaction"]
+                            ]
+                            # row.append(val['Qualification'])
+                            # row.append(val['Age'])
+                            # row.append(val['Experience'])
+                            # row.append(val['Gender'])
+                            # row.append(val['ENTHUSIASM'])
+                            # row.append(val['WORKOVERLD'])
+                            # row.append(val['ENJOYMNT'])
+                            # row.append(val['UNPLSNTTASK'])
+                            # row.append(val['TOUGH PERFORMNCE'])
+                            # row.append(val['TIME MNGMNT'])
+                            # row.append(val['DISAPNTMNT'])
+                            # row.append(val['DOWNHRTED'])
+                            # row.append(val['BOTHRED'])
+                            # row.append(val['EMOSNAL STABLTY'])
+                            # row.append(val['CHEERUL'])
+                            # row.append(val['TIRED'])
+                            # row.append(val['ABSNT MIND'])
+                            # row.append(val['DISCUSS CO-WORKER'])
+                            # row.append(val['PERSNL MTTR'])
+                            # row.append(val['THOUGHT OF LEAVING'])
+                            # row.append(val['LESS EFFORT'])
+                            # row.append(val['Satisfaction'])
+                            df.loc[len(df.index)] = row
+                            #df = df.append(val, ignore_index = True)
             if(len(survey)<=0):
                 #st.subheader(str(survey_lenght) + " number of people attended this survey")
                 st.subheader("No one has attended this survey")
@@ -295,12 +288,12 @@ with log_tab1:
                 with row1_col1:
                     companey_name = st.text_input('Company Name',placeholder="Enter your Companey Name", value=st.session_state["name"], disabled= True)
                 with row1_col2:
-                    email = st.text_input('Email',placeholder="Enter your Email")
+                    email = st.text_input('Email',placeholder="Enter your Email", value= st.session_state['email'] , disabled= True)
                 row2_col1, row2_col2 = st.columns(2)
                 with row2_col1:
                     survey_name = st.text_input('Survey Name',placeholder="Enter your Survey Name")
                 with row2_col2:
-                    passcode = st.text_input('username',type="password", key="password", value=st.session_state["username"])
+                    passcode = st.text_input('username',type="password", key="password", value=st.session_state["username"],disabled= True)
                 submitted = st.form_submit_button("Create")
                 if submitted:
                     #companey_nam = check(companey_nam)
@@ -321,22 +314,15 @@ with log_tab1:
                     else:
                         st.error(":error: Survey name already exist")
         if menu == 'Manage Surveys':
-            selected_comp = None
             selected_survey = None
             survey_list = None
             df = []
             st.title("Manage Your Survey")
-            row1_col1, row1_col2, row1_col3, = st.columns(3)
-            with row1_col1:
-                company_list = get_company_list()
-                selected_comp = st.selectbox(
-                "Select Your Company:",
-                options=company_list
-                )
+            row1_col2, row1_col3, = st.columns([6,3])
             with row1_col2:
-                if selected_comp is not None:
+                if st.session_state['name'] is not None:
                     selected_survey = None
-                    survey_list, comp_email = get_survey_list(selected_comp)
+                    survey_list, comp_email = get_survey_list(st.session_state['name'])
                     selected_survey = st.selectbox(
                     "Select Your survey:",
                     options=survey_list
@@ -385,6 +371,21 @@ with log_tab1:
                             "text/csv",
                             key='download-csv'
                         )
+                row3_col1, row3_col2 = st.columns([5,5])
+                with row3_col1:
+                    if authentication_status:
+                        try:
+                            if authenticator.update_user_details(username, 'Update user details'):
+                                st.success('Entries updated successfully')
+                        except Exception as e:
+                            st.error(e)
+                with row3_col2:
+                    if authentication_status:
+                        try:
+                            if authenticator.reset_password(username, 'Reset password'):
+                                st.success('Password modified successfully')
+                        except Exception as e:
+                            st.error(e) 
             
         # ---- MAINPAGE ----
     elif st.session_state["authentication_status"] is False:
@@ -411,10 +412,3 @@ with log_tab3:
             st.error('Username not found')
     except Exception as e:
         st.error(e)
-with log_tab4:
-    if authentication_status:
-        try:
-            if authenticator.reset_password(username, 'Reset password'):
-                st.success('Password modified successfully')
-        except Exception as e:
-            st.error(e)
