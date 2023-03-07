@@ -7,3 +7,4 @@ firebase_admin
 pgen2
 plotly
 streamlit-option-menu
+streamlit-authenticator

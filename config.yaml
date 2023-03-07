@@ -1,0 +1,13 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    crio:
+      email: crio77impex@gmail.com
+      name: Crio
+      password: $2b$12$4vwbnC7Oasadm4xL6lFNc.QM12zs5MPciTG2ZrzRFlPZ0DH04aOg.
+preauthorized:
+  emails:
+  - i@soumalya.in
