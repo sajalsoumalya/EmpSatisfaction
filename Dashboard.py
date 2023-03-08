@@ -66,7 +66,7 @@ def check(name):
 #function to get the list of Surveys
 
 def company_check(name):
-    comp = ref.child(name).order_by_key().get()
+    comp = ref.order_by_key().equal_to(name).get()
     if(len(comp)==0):
         return True
     else:
