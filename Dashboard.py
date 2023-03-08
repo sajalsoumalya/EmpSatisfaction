@@ -356,13 +356,17 @@ with log_tab1:
                                 st.success('Entries updated successfully')
                         except Exception as e:
                             st.error(e)
+                        with open('config.yaml', 'w') as file:
+                            yaml.dump(config, file, default_flow_style=False)
                 with row3_col2:
                     if authentication_status:
                         try:
                             if authenticator.reset_password(username, 'Reset password'):
                                 st.success('Password modified successfully')
                         except Exception as e:
-                            st.error(e) 
+                            st.error(e)
+                        with open('config.yaml', 'w') as file:
+                            yaml.dump(config, file, default_flow_style=False)
             
         # ---- MAINPAGE ----
     elif st.session_state["authentication_status"] is False:
