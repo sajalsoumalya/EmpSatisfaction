@@ -22,6 +22,8 @@ import streamlit_authenticator as stauth
 from yaml.loader import SafeLoader
 import yaml
 
+import datetime
+
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="Employee Satisfaction Dashboard", page_icon=":bar_chart:",layout="wide",initial_sidebar_state="collapsed")
 with open('Dashboard.css') as f:
@@ -53,30 +55,28 @@ def get_curent_url():
 #     return df
 def check(name):
     k = True
-    surveyref = db.reference('Survey/'+name)
-    value = surveyref.order_by_key().equal_to(key).get()
-    length = len(list(value.keys()))
-    if(length>0):
-        k=False
-    return k
-def check(key,name):
-    k = True
-    surveyref = db.reference('Survey/'+name)
-    value = surveyref.order_by_key().equal_to(key).get()
+    cname = str(st.session_state['name'])
+
+    surveyref = ref.child(cname)
+    value = surveyref.order_by_key().equal_to(name).get()
     length = len(list(value.keys()))
     if(length>0):
         k=False
     return k
 #function to get the list of Surveys
 
-def get_company_list():
-    company_list = ref.order_by_key().get()
-    return list(company_list.keys())
+def company_check(name):
+    comp = ref.child(name).order_by_key().get()
+    if(len(comp)==0):
+        return True
+    else:
+        return False
+
 
 def get_survey_list(cmp):
     ref2 = ref.child(cmp)
     survey_list = ref2.order_by_key().get()
-    email = survey_list["email"]
+
     del survey_list["email"]
     del survey_list["username"]
     return list(survey_list.keys())
@@ -190,15 +190,16 @@ with log_tab1:
         icons=['house', 'cloud-upload','gear','user'], 
         menu_icon="cast", default_index=0, orientation="horizontal")
         selected_comp = st.session_state["name"]
+        uname = st.session_state['username']
+        cemail = config['credentials']['usernames'][uname]['email']
+        st.session_state['email'] = cemail
         if menu == 'Dashboard':
             if selected_comp is not None:
-                uname = st.session_state['username']
-                cemail = config['credentials']['usernames'][uname]['email']
-                st.session_state['email'] = cemail
-                ref.child(selected_comp).set({
-                    'email': cemail,
-                    'username': uname
-                })
+                if company_check(selected_comp):
+                    ref.child(selected_comp).set({
+                        'email': st.session_state['email'],
+                        'username': st.session_state['username']
+                    })
                 survey_list = get_survey_list(selected_comp)
                 if(len(survey_list)>0):
                     selected_survey = st.selectbox(
@@ -208,68 +209,55 @@ with log_tab1:
                     if selected_survey is not None:
                         ch = selected_comp+'/'+selected_survey
                         survey = ref.child(ch).order_by_key().get()
-                        survey_passcode = str(survey["passcode"])
-                        del survey["passcode"]
-                        if(survey_passcode == str(st.session_state["username"]) ):
-                            survey_lenght = len(survey)
-                            for vals in survey:
-                                val = survey[vals]
-                                row = [
-                                    val["Qualification"],val["Age"],val["Experience"],val["Gender"],
-                                    val["ENTHUSIASM"],val["WORKOVERLD"],val["ENJOYMNT"],val["UNPLSNTTASK"],
-                                    val["TOUGH PERFORMNCE"],val["TIME MNGMNT"],val["DISAPNTMNT"],
-                                    val["DOWNHRTED"],val["BOTHRED"],val["EMOSNAL STABLTY"],
-                                    val["CHEERUL"],val["TIRED"],val["ABSNT MIND"],val["DISCUSS CO-WORKER"],
-                                    val["PERSNL MTTR"],val["THOUGHT OF LEAVING"],
-                                    val["LESS EFFORT"],val["Satisfaction"]
-                                ]
-                                df.loc[len(df.index)] = row
-                                if(len(survey)<=0):
-                                    #st.subheader(str(survey_lenght) + " number of people attended this survey")
-                                    st.subheader("No one has attended this survey")
-                                elif(survey_passcode != str(st.session_state["username"]) ):
-                                    st.markdown(
-                                        """
-                                        <style>
-                                        .css-1m6fanh{
-                                            display:block;
-                                        }
-                                        </style>
-                                        """,unsafe_allow_html=True,)
-                                    st.subheader("You are are not authorized to access this survey")
-                                else:
-                                    female = df['Gender'].tolist().count('Female')
-                                    male = df['Gender'].tolist().count('Male')
-                                    ratio = str(male) +"    :"+str(female)
+                        del survey["created_date"]
+                        survey_lenght = len(survey)
+                        for vals in survey:
+                            val = survey[vals]
+                            row = [
+                                val["Qualification"],val["Age"],val["Experience"],val["Gender"],
+                                val["ENTHUSIASM"],val["WORKOVERLD"],val["ENJOYMNT"],val["UNPLSNTTASK"],
+                                val["TOUGH PERFORMNCE"],val["TIME MNGMNT"],val["DISAPNTMNT"],
+                                val["DOWNHRTED"],val["BOTHRED"],val["EMOSNAL STABLTY"],
+                                val["CHEERUL"],val["TIRED"],val["ABSNT MIND"],val["DISCUSS CO-WORKER"],
+                                val["PERSNL MTTR"],val["THOUGHT OF LEAVING"],
+                                val["LESS EFFORT"],val["Satisfaction"]
+                            ]
+                            df.loc[len(df.index)] = row
+                        if(len(survey)<=0):
+                            #st.subheader(str(survey_lenght) + " number of people attended this survey")
+                            st.subheader("No one has attended this survey")
+                        else:
+                            female = df['Gender'].tolist().count('Female')
+                            male = df['Gender'].tolist().count('Male')
+                            ratio = str(male) +"    :"+str(female)
 
-                                    placeholder = st.empty()
-                                    with placeholder.container():
-                                        # create three columns
-                                        kpi1, kpi2, kpi3 = st.columns(3)
-                                        # fill in those three columns with respective metrics or KPIs 
-                                        kpi1.metric(label="Compeny Name 💍", value=selected_comp, delta=comp_email)
-                                        kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
-                                        kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
+                            placeholder = st.empty()
+                            with placeholder.container():
+                                # create three columns
+                                kpi1, kpi2, kpi3 = st.columns(3)
+                                # fill in those three columns with respective metrics or KPIs 
+                                kpi1.metric(label="Compeny Name 💍", value=selected_comp, delta=comp_email)
+                                kpi2.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
+                                kpi3.metric(label="Gender Ratio ⏳", value= ratio, delta= 'Male:Female')
 
-                                        # create two columns for charts 
+                                # create two columns for charts 
 
-                                        fig_col1, fig_col2 = st.columns(2)
-                                        with fig_col1:
-                                            st.markdown("### Density Heatmap")
-                                            feature_list = df.columns.values.tolist()
-                                            selected_feature = st.selectbox(
-                                            "Select The Survey:",
-                                            options=feature_list
-                                            )
-                                            fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
-                                            st.write(fig)
-                                        with fig_col2:
-                                            st.markdown("### Age Histogram")
-                                            fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
-                                            st.write(fig2)
-                                        st.markdown("### Detailed Data View")
-                                        st.dataframe(df)
-                                        time.sleep(1)
+                                fig_col1, fig_col2 = st.columns(2)
+                                with fig_col1:
+                                    st.markdown("### Density Heatmap")
+                                    feature_list = df.columns.values.tolist()
+                                    selected_feature = st.selectbox(
+                                    "Select The Survey:",
+                                    options=feature_list
+                                    )
+                                    fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
+                                    st.write(fig)
+                                with fig_col2:
+                                    st.markdown("### Age Histogram")
+                                    fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
+                                    st.write(fig2)
+                                st.markdown("### Detailed Data View")
+                                st.dataframe(df)
                 else:
                     st.subheader("No survey has been created")
         if menu == 'Create Survey':
@@ -294,15 +282,15 @@ with log_tab1:
                 submitted = st.form_submit_button("Create")
                 if submitted:
                     #companey_nam = check(companey_nam)
-                    survey = check(survey_name,companey_name)
-                    ref2 = ref.child(companey_name)
+                    survey = check(survey_name)
                     if survey == True:
                         survey_name = str(survey_name)
                         survey_nam = survey_name.replace(" ", "_")
-                        ref.child(companey_name).set({
-                            "email":email,
+                        ref2 = ref.child(companey_name)
+                        n = datetime.datetime.now()
+                        ref2.child(survey_nam).set({
+                            "created_date":str(n)
                         })
-                        ref2.child(survey_nam).set({"passcode":passcode})
                         with placeHolder:
                                 st.success("Survey Created")
                                 link = companey_name+'&survey='+survey_nam
@@ -319,16 +307,17 @@ with log_tab1:
             with row1_col2:
                 if st.session_state['name'] is not None:
                     selected_survey = None
-                    survey_list, comp_email = get_survey_list(st.session_state['name'])
-                    selected_survey = st.selectbox(
-                    "Select Your survey:",
-                    options=survey_list
-                    )
-                    slink = selected_comp+'/'+selected_survey
-                    survey = ref.child(slink).order_by_key().get()
-                    survey_passcode = survey["passcode"]
-                    del survey["passcode"]
-                    survey_lenght = len(survey)
+                    survey_list = get_survey_list(st.session_state['name'])
+                    if(len(survey_list) == 0):
+                        st.subheader("No Survey hass been created")
+                    else:
+                        selected_survey = st.selectbox(
+                        "Select Your survey:",
+                        options=survey_list
+                        )
+                        slink = selected_comp+'/'+selected_survey
+                        survey = ref.child(slink).order_by_key().get()
+                        survey_lenght = len(survey)
             with row1_col3:
                 kp1,kp2= st.columns(2)
                 kp1.metric(label="Response Count ", value= survey_lenght, delta = 'Employees')
@@ -396,12 +385,12 @@ with log_tab2:
     except Exception as e:
         st.error(e)
     with open('config.yaml', 'w') as file:
-                yaml.dump(config, file, default_flow_style=False)
+        yaml.dump(config, file, default_flow_style=False)
 with log_tab3:
     try:
         username_forgot_pw, email_forgot_password, random_password = authenticator.forgot_password('Forgot password')
         if username_forgot_pw:
-            st.success('New password sent securely')
+            st.success(random_password + 'New password sent securely')
             # Random password to be transferred to user securely
         if authenticator.forgot_password('Forgot password') is None:
             st.markdown("##")
@@ -409,3 +398,5 @@ with log_tab3:
             st.error('Username not found')
     except Exception as e:
         st.error(e)
+    with open('config.yaml', 'w') as file:
+        yaml.dump(config, file, default_flow_style=False)
