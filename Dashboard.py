@@ -84,6 +84,7 @@ survey_lenght = None
 survey = {}
 
 def uplaod_data_from_csv(df, comp, survey):
+    df = df.dropna()
     features=x=df[df.columns[4:]].values
     loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
     result1 = loaded_model.predict(x)
