@@ -12,6 +12,10 @@ credentials:
       email: i@soumalya.in
       name: Soumalya Chowdhury
       password: $2b$12$Ii6k5ai3TSzE8.kVMbgu1eUxHYvpKPS9JBIlhOkMzziIpOP57lqw2
+    s9862:
+      email: soumalya9862@gmail.com
+      name: Soumalya Chowdhury
+      password: $2b$12$Viqug10FUNkZlEoQexHmE.oaFfYr1288c49NdyMS8ulTvBI36vATW
 preauthorized:
   emails:
   - i@soumalya.in
