@@ -43,16 +43,6 @@ def get_curent_url():
     return get_url
     # ---- READ EXCEL ----
 
-
-# def get_data_from_excel(sheet_name):
-#     df = pd.read_excel(
-#         io="./survey.xlsx",
-#         sheet_name=sheet_name,
-#         na_filter = True
-#     )
-#     # Add 'hour' column to dataframe
-#     #df["hour"] = pd.to_datetime(df["Time"], format="%H:%M:%S").dt.hour
-#     return df
 def check(name):
     k = True
     cname = str(st.session_state['name'])
