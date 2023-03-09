@@ -84,15 +84,16 @@ survey_lenght = None
 survey = {}
 
 def uplaod_data_from_csv(df, comp, survey):
-    df = df.dropna()
+    
     features=x=df[df.columns[4:]].values
     loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
-    result1 = loaded_model.predict(x)
+    result1 = loaded_model.predict(features)
+
     list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
     slink = comp+'/'+survey
     for ind in df.index:
-        result_index = json.dumps(int(result1[ind]))
-        result_index = int(result_index)-1
+        result = json.dumps(int(result1[ind]))
+        result = int(result)
         s={
             "Qualification":df['Qualification'][ind],
             "Age":json.dumps(int(df['Age'][ind])),
@@ -115,7 +116,7 @@ def uplaod_data_from_csv(df, comp, survey):
             "PERSNL MTTR":json.dumps(int(df['PERSNL MTTR'][ind])),
             "THOUGHT OF LEAVING":json.dumps(int(df['THOUGHT OF LEAVING'][ind])),
             "LESS EFFORT":json.dumps(int(df['LESS EFFORT'][ind])),
-            "Satisfaction":list_val[result_index]
+            "Satisfaction":list_val[result-1]
             }
         ref.child(slink).push().set(s)
 
@@ -335,6 +336,9 @@ with log_tab1:
                 with row2_col2:
                     if uploaded_file is not None:
                         uploaded_csv = pd.read_csv(uploaded_file)
+                        uploaded_csv = uploaded_csv.dropna()
+                        uploaded_csv = uploaded_csv.reset_index(drop=True)
+
                         st.dataframe(uploaded_csv)
                         
                         if st.button("Upload data"):
