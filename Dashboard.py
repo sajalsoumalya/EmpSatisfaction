@@ -88,6 +88,7 @@ def uplaod_data_from_csv(df, comp, survey):
     features=x=df[df.columns[4:]].values
     loaded_model = pickle.load(open("finalized_model.sav", 'rb'))
     result1 = loaded_model.predict(x)
+    st.write(result1)
     result_index = json.dumps(int(result1[0]))
     result_index = int(result_index)-1
     list_val=['Strongly Disagree', 'Disagree', 'Neutral', 'agree', 'strongly agree']
