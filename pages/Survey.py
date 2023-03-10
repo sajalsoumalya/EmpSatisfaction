@@ -166,7 +166,7 @@ if (survey_dict_length>0):
                ref.child(slink).push().set(data)
                placeholder.empty()
                with placeholder:
-                    st.success("Congrts! You have succesfully completed the survey")
+                    st.success("Thank You for completing the survey")
 else:
      st.header("Opps! Survey does not exits",anchor=None)
      st.write("Please contact to the Administrator")
