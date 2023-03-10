@@ -239,13 +239,13 @@ with log_tab1:
                                     st.markdown("### Density Heatmap")
                                     feature_list = df.columns.values.tolist()
                                     selected_feature = st.selectbox(
-                                    "Select The Survey:",
+                                    "Select The Feature:",
                                     options=feature_list
                                     )
                                     fig = px.density_heatmap(data_frame=df, y = selected_feature, x = 'Satisfaction')
                                     st.write(fig)
                                 with fig_col2:
-                                    st.markdown("### Age Histogram")
+                                    st.markdown("### Histogram of Satisfaction Level")
                                     fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
                                     st.write(fig2)
                                 st.markdown("### Detailed Data View")
