@@ -248,7 +248,7 @@ with log_tab1:
                                     st.markdown("### Histogram of Satisfaction Level")
                                     fig2 = px.histogram(data_frame = df, x = 'Satisfaction')
                                     st.write(fig2)
-                                st.markdown("### Detailed Data View")
+                                st.markdown("### Detailed Data View with predicted Satisfaction")
                                 st.dataframe(df)
                 else:
                     st.subheader("No survey has been created")
