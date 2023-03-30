@@ -375,8 +375,6 @@ with log_tab1:
         # ---- MAINPAGE ----
     elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
-#    elif st.session_state["authentication_status"] is None:
-#        st.warning('Please enter your username and password')
 with log_tab2:
     try:
         if authenticator.register_user('Register user', preauthorization=False):
@@ -389,7 +387,7 @@ with log_tab3:
     try:
         username_forgot_pw, email_forgot_password, random_password = authenticator.forgot_password('Forgot password')
         if username_forgot_pw:
-            st.success(random_password + 'New password sent securely')
+            st.success(random_password + ' New password sent securely')
             # Random password to be transferred to user securely
         if authenticator.forgot_password('Forgot password') is None:
             st.markdown("##")
