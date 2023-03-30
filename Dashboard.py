@@ -389,6 +389,8 @@ with log_tab3:
         if username_forgot_pw:
             st.success(random_password + ' New password sent securely')
             # Random password to be transferred to user securely
+        if username_forgot_pw is None:
+            st.markdown("##")
         else:
             st.error('Username not found')
     except Exception as e:
