@@ -19,7 +19,7 @@ ref = db.reference('Survey/')
 
 
 dt={'Strongly Disagree':1,"Disagree":2,"Neutral":3,"agree":4,"strongly agree":5}
-st.set_page_config(page_title='Emp Satisfaction',layout="centered")
+st.set_page_config(page_title=' Employee Satisfaction Survey',layout="centered")
 with open('./css/style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
