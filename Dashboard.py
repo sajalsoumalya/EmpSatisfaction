@@ -26,7 +26,7 @@ import datetime
 
 # emojis: https://www.webfx.com/tools/emoji-cheat-sheet/
 st.set_page_config(page_title="EmpSatisfaction Finder", page_icon=":bar_chart:",layout="wide",initial_sidebar_state="collapsed")
-with open('Dashboard.css') as f:
+with open('./css/Dashboard.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 import random
