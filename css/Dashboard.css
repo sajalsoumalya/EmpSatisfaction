@@ -2,7 +2,10 @@
     display: none;
 }
 .css-z5fcl4{
-    padding:0rem 1rem 2rem;
+    padding:1rem 1rem 2rem;
+}
+.css-6wrhc{
+    display: none;
 }
 
 [data-testid="collapsedControl"] {
