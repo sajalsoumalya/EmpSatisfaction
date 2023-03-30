@@ -1,6 +1,9 @@
 [data-testid="stHeader"]{
     display: none;
 }
+.css-z5fcl4{
+    padding:0rem 1rem 2rem;
+}
 
 [data-testid="collapsedControl"] {
         display: none
